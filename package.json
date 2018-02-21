@@ -1,0 +1,26 @@
+{
+  "name": "ReasonML Workshop",
+  "version": "0.1.0",
+  "scripts": {
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "clean": "bsb -clean-world",
+    "test": "concurrently -n bsb,jest 'bsb -make-world -w' 'jest --coverage --watch'"
+  },
+  "keywords": [
+    "ReasonML",
+    "BuckleScript",
+    "OCaml",
+    "Workshop"
+  ],
+  "authors": [
+    "Mathieu Breton <mathieu.breton@js-republic.com>",
+    "Emmanuel Ernest <emmanuel.ernest@js-republic.com>"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@glennsl/bs-jest": "^0.4.2",
+    "bs-platform": "^2.2.0",
+    "concurrently": "^3.5.1"
+  }
+}
