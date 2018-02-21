@@ -1,11 +1,11 @@
 {
-  "name": "ReasonML Workshop",
+  "name": "reason-ml-workshop",
   "version": "0.1.0",
   "scripts": {
     "build": "bsb -make-world",
     "start": "bsb -make-world -w",
     "clean": "bsb -clean-world",
-    "test": "concurrently -n bsb,jest 'bsb -make-world -w' 'jest --coverage --watch'"
+    "test": "concurrently -c bgBlue.bold,black.bgYellow.bold -n BSB,Jest 'bsb -make-world -w' 'jest --watchAll'"
   },
   "keywords": [
     "ReasonML",
