@@ -1,9 +1,7 @@
 open Webapi.Dom;
 open Util;
-
-
 let bootstrapGame = (el: Dom.element) => {
-  let ctx = Webapi.Canvas.CanvasElement.getContext2d(el);
+  let ctx: Canvas2dRe.t = Webapi.Canvas.CanvasElement.getContext2d(el);
   Js.Promise.all4((
     loadImage("assets/ship.png"),
     loadImage("assets/space2.png"),
@@ -21,9 +19,8 @@ let bootstrapGame = (el: Dom.element) => {
   |> ignore;
   ()
 };
-
 let canvasEl: option(Dom.element) = Document.getElementById("game", document);
 switch (canvasEl){
   | Some(el) => bootstrapGame(el)
-  | None => Js.log("Canvas introuvable")
+  | None => failwith ("Canvas introuvable")
 };
