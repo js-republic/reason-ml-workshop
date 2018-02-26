@@ -1,41 +1,36 @@
-open Constants;
-open Webapi.Canvas.Canvas2d;
+open State;
 
-type state = StartState | InGameState | EndState;
+open Actions;
 
-let handleStartState = (ctx: Canvas2dRe.t, images) => {
-  setFillStyle(ctx, String, "tomato");
-  ctx |> beginPath;
-  ctx |> rect(~x=0., ~y=0., ~w=game.width, ~h=game.height);
-  ctx |> fill;
-  /*
-  goToState(ctx, images, InGameState);*/
-  ()
+type canvasContext = Webapi.Canvas.Canvas2d.t;
+
+let renderInGameStage = (ctx: canvasContext, state: State.rootStateType) => {
+  InGameStage.render(ctx, state);
+  Ship.render(ctx, state);
+  ();
 };
- 
-let handleInGameState = (ctx: Canvas2dRe.t, images) => {
-  /*goToState(ctx, images, EndState);*/
-  ()
-};
-
-let handleEndState = (ctx: Canvas2dRe.t, images) => {
-  /*goToState(ctx, images, StartState);*/
-  ()
-};
-
-let goToState = (ctx: Canvas2dRe.t, images, currentState: state): unit => switch (currentState) {
-  | StartState => handleStartState(ctx, images)
-  | InGameState => handleInGameState(ctx, images)
-  | EndState => handleEndState(ctx, images)
-};
-
-let run = (ctx: Canvas2dRe.t, images): unit => {
-  goToState(ctx, images, StartState);
-}
-
 
 /*
-  Document.addEventListener("keydown", (event: Dom.event):unit => {
-    Js.log(event);
-  }, document);
-*/
+ goToState(ctx, images, InGameState);*/
+let dispatch = (action: bootstrapAction) =>
+  /* TODO: Call each reducer ! */
+  switch action {
+  | ShipImageLoaded(img) =>
+    rootState.ship = {...rootState.ship, potentialSprite: Some(img)}
+  | BgImageLoaded(img) =>
+    rootState.screen = {...rootState.screen, potentialBg: Some(img)}
+  | AlienImageLoaded(img) => rootState.alien = {potentialSprite: Some(img)}
+  | ShotImageLoaded(img) =>
+    rootState.ship = {...rootState.ship, potentialShotImg: Some(img)}
+  };
+
+let rec onFrame = (ctx: canvasContext, state: rootStateType, _: float) => {
+  switch state.currentStage {
+  | _ => renderInGameStage(ctx, state)
+  };
+  Webapi.requestAnimationFrame(onFrame(ctx, rootState));
+  ();
+};
+
+let run = (ctx: canvasContext) : unit =>
+  Webapi.requestAnimationFrame(onFrame(ctx, rootState));
