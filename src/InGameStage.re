@@ -1,6 +1,6 @@
 open Webapi.Canvas.Canvas2d;
 
-let render = (ctx: Webapi.Canvas.Canvas2d.t, state: State.rootStateType) => {
+let render = (ctx: Webapi.Canvas.Canvas2d.t, state: Types.rootState) => {
   switch state.screen.potentialBg {
   | Some(bg) => HtmlImage.drawImage(bg, 0, 0, ctx)
   | None =>

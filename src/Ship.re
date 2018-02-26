@@ -4,16 +4,13 @@ let willMount = () => ();
 
 let willDestroy = () => ();
 
-let renderShip = (sprite, ctx, state: State.rootStateType) => {
-  let y = int_of_float(state.screen.height -. state.ship.height);
-  HtmlImage.drawImage(sprite, state.ship.xPos, y, ctx);
-  ();
-};
-
-let render = (ctx, state: State.rootStateType) =>
+let render = (ctx, state: Types.rootState) =>
   switch state.ship.potentialSprite {
-  | Some(sprite) => renderShip(sprite, ctx, state)
+  | Some(sprite) =>
+    let y = int_of_float(state.screen.height -. state.ship.height);
+    HtmlImage.drawImage(sprite, state.ship.xPos, y, ctx);
+    ();
   | None => ()
   };
 
-let apply = x => x;
+let reducer = (x, y) => x;

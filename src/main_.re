@@ -17,7 +17,8 @@ let dispatchAllImageActions = imgs =>
   | _ => failwith("At least one image is not loaded correctly")
   };
 
-let bootstrapGame = (el: Dom.element) => {
+switch (Document.getElementById("game", document)) {
+| Some(el) =>
   let ctx = Webapi.Canvas.CanvasElement.getContext2d(el);
   Game.run(ctx);
   all([|
@@ -33,29 +34,5 @@ let bootstrapGame = (el: Dom.element) => {
      })
   |> ignore;
   ();
-};
-
-let canvasEl: option(Dom.element) = Document.getElementById("game", document);
-
-switch canvasEl {
-| Some(el) => bootstrapGame(el)
 | None => failwith("Canvas introuvable")
 };
-/*
- all([|
-     loadImage("assets/ship.png"),
-     loadImage("assets/space2.png"),
-     loadImage("assets/normal-alien.png"),
-     loadImage("assets/bad-alien.png")
-   |])
-   |> then_([|shipImg, space2Img, alienImg, badAlienImg|] => {
-     resolve();
-   })
-   |> catch(error => {
-        Js.log(error);
-        resolve();
-      })
-   |> ignore;
-   ()
-
- */
