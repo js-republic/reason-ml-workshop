@@ -9,10 +9,10 @@ open Actions;
 let dispatchAllImageActions = imgs =>
   switch imgs {
   | [|shipImg, bgImg, alienImg, shotImg|] =>
-    Game.dispatch(ShipImageLoaded(shipImg));
-    Game.dispatch(BgImageLoaded(bgImg));
-    Game.dispatch(AlienImageLoaded(alienImg));
-    Game.dispatch(ShotImageLoaded(shotImg));
+    Store.dispatch(ShipImageLoaded(shipImg));
+    Store.dispatch(BgImageLoaded(bgImg));
+    Store.dispatch(AlienImageLoaded(alienImg));
+    Store.dispatch(ShotImageLoaded(shotImg));
     resolve();
   | _ => failwith("At least one image is not loaded correctly")
   };

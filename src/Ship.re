@@ -12,5 +12,3 @@ let render = (ctx, state: Types.rootState) =>
     ();
   | None => ()
   };
-
-let reducer = (x, y) => x;

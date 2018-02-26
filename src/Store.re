@@ -1,24 +1,32 @@
 open Types;
 
-let startState: stage(rootState, rootState) = {
-  reducers: [Ship.reducer],
+open Actions;
+
+let startStage: stage(rootState) = {renderers: []};
+
+let inGameStage: stage(rootState) = {
   renderers: [InGameStage.render, Ship.render]
 };
 
-let inGameState: stage(rootState, rootState) = {reducers: [], renderers: []};
+let endStage: stage(rootState) = {renderers: []};
 
-let endState: stage(rootState, rootState) = {reducers: [], renderers: []};
-
-type storeType('state) = {mutable state: 'state};
+type storeType('state) = {
+  mutable actionsToReduce: list(bootstrapAction),
+  mutable reducer: (float, 'state, bootstrapAction) => 'state,
+  mutable stage: stage('state),
+  mutable state: 'state
+};
 
 let store: storeType(rootState) = {
+  stage: inGameStage,
+  reducer: Reducer.mainReducer,
+  actionsToReduce: [],
   state: {
     screen: {
       height: 400.,
       width: 600.,
       potentialBg: None
     },
-    currentStage: startState,
     ship: {
       potentialSprite: None,
       potentialShotImg: None,
@@ -31,3 +39,6 @@ let store: storeType(rootState) = {
     }
   }
 };
+
+let dispatch = (action: bootstrapAction) =>
+  store.actionsToReduce = store.actionsToReduce @ [action];
