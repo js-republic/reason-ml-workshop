@@ -13,6 +13,6 @@ let rec onFrame = (ctx: canvasContext, elapsedTime: float) => {
 };
 
 let run = (ctx: canvasContext) : unit => {
-  Stage.goTo(Stage.inGame);
+  Stage.goTo(Stage.start);
   Webapi.requestAnimationFrame(onFrame(ctx));
 };

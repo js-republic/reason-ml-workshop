@@ -4,7 +4,7 @@ open Types;
 
 let start: stageType = {
   willMount: (_) => (),
-  render: (_, _) => (),
+  render: (ctx, state) => StartBg.render(ctx, state.screen),
   willDestroy: (_) => ()
 };
 
