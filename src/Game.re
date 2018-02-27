@@ -3,9 +3,9 @@ open Store;
 type canvasContext = Webapi.Canvas.Canvas2d.t;
 
 let rec onFrame = (ctx: canvasContext, lastTime: float, newTime: float) => {
-  dispatch(Actions.Tick);
   let elapsedTime = newTime -. lastTime;
-  applyReducer(elapsedTime);
+  dispatch(Actions.Tick(elapsedTime));
+  applyReducers();
   switch store.stage {
   | Some(stage) => stage.render(ctx, store.state)
   | _ => ()

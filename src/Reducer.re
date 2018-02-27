@@ -1,16 +1,7 @@
 open Types;
 
-let main =
-    (elapsedTime: float, state: rootState, action: Actions.all)
-    : rootState =>
+let main = (state: rootState, action: Actions.all) : rootState =>
   switch action {
-  | ClearInGameState => {
-      ...state,
-      shots: {
-        ...state.shots,
-        items: []
-      }
-    }
   | ShipImageLoaded(img) => {
       ...state,
       ship: {
@@ -28,15 +19,19 @@ let main =
   | AlienImageLoaded(img) => {
       ...state,
       alien: {
-        potentialSprite: Some(img)
+        ...state.alien,
+        itemModel: {
+          ...state.alien.itemModel,
+          potentialSprite: Some(img)
+        }
       }
     }
   | ShotImageLoaded(img) => {
       ...state,
-      shots: {
-        ...state.shots,
+      shot: {
+        ...state.shot,
         itemModel: {
-          ...state.shots.itemModel,
+          ...state.shot.itemModel,
           potentialSprite: Some(img)
         }
       }

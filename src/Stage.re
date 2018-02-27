@@ -21,12 +21,11 @@ let inGame: stageType = {
   render: (ctx, state) => {
     InGameBg.render(ctx, state.screen);
     Ship.render(ctx, state.ship);
-    state.shots.items |> List.iter(Shot.render(ctx));
+    state.shot.items |> List.iter(Shot.render(ctx));
+    state.alien.items |> List.iter(Alien.render(ctx));
   },
-  willDestroy: state => {
-    document |> Document.addEventListener("keydown", Ship.onKeyDown(state));
-    dispatch(Actions.ClearInGameState);
-  }
+  willDestroy: state =>
+    document |> Document.removeEventListener("keydown", Ship.onKeyDown(state))
 };
 
 let start: stageType = {

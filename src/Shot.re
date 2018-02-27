@@ -1,23 +1,15 @@
 open Types;
 
-let willMount = () => ();
+let tickShots = (shots: list(shot), elapsedTime: float) : list(shot) =>
+  shots
+  |> List.map((i: shot) => ({...i, y: i.y -. elapsedTime *. 0.5}: shot))
+  |> List.filter((i: shot) => i.y > 0.);
 
-let willDestroy = () => ();
-
-let shotsReducer =
-    (elapsedTime: float, state: shotsState, action: Actions.all)
-    : shotsState =>
+let reducer = (state: shotState, action: Actions.all) : shotState =>
   switch action {
-  | Tick =>
-    let items: list(shot) =
-      state.items
-      |> List.map(i => {...i, y: i.y -. elapsedTime *. 0.5})
-      |> List.filter(i => i.y > 0.);
-    {...state, items};
-  | Shot(xPos, yPos) => {
-      ...state,
-      items: state.items @ [{...state.itemModel, x: xPos, y: yPos}]
-    }
+  | ClearInGameState => {...state, items: []}
+  | Tick(elapsedTime) => {...state, items: tickShots(state.items, elapsedTime)}
+  | Shot(x, y) => {...state, items: state.items @ [{...state.itemModel, x, y}]}
   | _ => state
   };
 

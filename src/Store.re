@@ -3,7 +3,7 @@ open Types;
 /*willMount: (Types.rootState) => (),*/
 type storeType('state) = {
   mutable actions: list(Actions.all),
-  mutable reducer: (float, 'state, Actions.all) => 'state,
+  mutable reducer: ('state, Actions.all) => 'state,
   mutable state: 'state,
   mutable stage: option(stageType)
 };
@@ -49,14 +49,14 @@ let store: storeType(rootState) = {
   stage: None
 };
 
-let applyReducer = (elapsedTime: float) : unit => {
+let applyReducers = () : unit => {
   store.state =
     store.actions
     |> List.fold_left(
          (state, action) => {
-           ...store.reducer(elapsedTime, state, action),
-           shot: Shot.shotsReducer(elapsedTime, state.shot, action),
-           alien: Alien.shotsReducer(elapsedTime, state.shot, action)
+           ...store.reducer(state, action),
+           shot: Shot.reducer(state.shot, action),
+           alien: Alien.reducer(state.alien, action)
          },
          store.state
        );

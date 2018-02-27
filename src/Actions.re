@@ -1,6 +1,6 @@
 type all =
   | ClearInGameState
-  | Tick
+  | Tick(float)
   | ShipImageLoaded(HtmlImage.t)
   | BgImageLoaded(HtmlImage.t)
   | AlienImageLoaded(HtmlImage.t)
