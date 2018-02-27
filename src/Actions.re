@@ -5,4 +5,4 @@ type all =
   | BgImageLoaded(HtmlImage.t)
   | AlienImageLoaded(HtmlImage.t)
   | ShotImageLoaded(HtmlImage.t)
-  | Shot(float);
+  | Shot(float, float);

@@ -1,6 +1,8 @@
-let mainReducer =
-    (_: float, state: Types.rootState, action: Actions.all)
-    : Types.rootState =>
+open Types;
+
+let main =
+    (elapsedTime: float, state: rootState, action: Actions.all)
+    : rootState =>
   switch action {
   | ClearInGameState => {
       ...state,
@@ -40,21 +42,25 @@ let mainReducer =
       }
     }
   | Tick =>
-    let shots = state.shots.items;
+    let newShotItems: list(shot) =
+      state.shots.items
+      |> List.map(i => {...i, y: i.y -. elapsedTime *. 0.5})
+      |> List.filter(i => i.y > 0.);
     {
       ...state,
       shots: {
         ...state.shots,
-        items: shots
+        items: newShotItems
       }
     };
-  | Shot(xPos) =>
-    let model = state.shots.itemModel;
+  | Shot(xPos, yPos) =>
+    Js.log(state.shots.items |> List.length);
     {
       ...state,
       shots: {
         ...state.shots,
-        items: state.shots.items @ [{...model, x: xPos, y: 30.}]
+        items:
+          state.shots.items @ [{...state.shots.itemModel, x: xPos, y: yPos}]
       }
     };
   };

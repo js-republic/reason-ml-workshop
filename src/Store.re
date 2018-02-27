@@ -9,7 +9,7 @@ type storeType('state) = {
 };
 
 let store: storeType(rootState) = {
-  reducer: Reducer.mainReducer,
+  reducer: Reducer.main,
   actions: [],
   state: {
     screen: {
