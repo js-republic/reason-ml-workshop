@@ -1,5 +1,3 @@
-let willMount: unit => unit;
-
-let willDestroy: unit => unit;
+let shotsReducer: (float, Types.shotsState, Actions.all) => Types.shotsState;
 
 let render: (Webapi.Canvas.Canvas2d.t, Types.shot) => unit;

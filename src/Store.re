@@ -43,7 +43,14 @@ let store: storeType(rootState) = {
 
 let applyReducer = (elapsedTime: float) : unit => {
   store.state =
-    store.actions |> List.fold_left(store.reducer(elapsedTime), store.state);
+    store.actions
+    |> List.fold_left(
+         (state, action) => {
+           ...store.reducer(elapsedTime, state, action),
+           shots: Shot.shotsReducer(elapsedTime, state.shots, action)
+         },
+         store.state
+       );
   store.actions = [];
   ();
 };

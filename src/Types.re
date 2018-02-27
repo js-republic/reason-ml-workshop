@@ -20,7 +20,7 @@ type shot = {
   height: float
 };
 
-type shotState = {
+type shotsState = {
   itemModel: shot,
   items: list(shot)
 };
@@ -31,7 +31,7 @@ type rootState = {
   screen: screenState,
   ship: shipState,
   alien: alienState,
-  shots: shotState
+  shots: shotsState
 };
 
 type stageType = {

@@ -41,7 +41,9 @@ let main =
         }
       }
     }
-  | Tick =>
+  | _ => state
+  };
+/*| Tick =>
     let newShotItems: list(shot) =
       state.shots.items
       |> List.map(i => {...i, y: i.y -. elapsedTime *. 0.5})
@@ -62,5 +64,4 @@ let main =
         items:
           state.shots.items @ [{...state.shots.itemModel, x: xPos, y: yPos}]
       }
-    };
-  };
+    };*/

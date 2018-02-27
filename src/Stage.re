@@ -2,6 +2,8 @@ open Store;
 
 open Types;
 
+open Webapi.Dom;
+
 let goTo = (stage: stageType) => {
   switch store.stage {
   | Some(stage) => stage.willDestroy(store.state)
@@ -13,8 +15,7 @@ let goTo = (stage: stageType) => {
 
 let inGame: stageType = {
   willMount: state => {
-    Webapi.Dom.document
-    |> Webapi.Dom.Document.addEventListener("keydown", Ship.onKeyDown(state));
+    document |> Document.addEventListener("keydown", Ship.onKeyDown(state));
     dispatch(Actions.ClearInGameState);
   },
   render: (ctx, state) => {
@@ -23,8 +24,7 @@ let inGame: stageType = {
     state.shots.items |> List.iter(Shot.render(ctx));
   },
   willDestroy: state => {
-    Webapi.Dom.document
-    |> Webapi.Dom.Document.addEventListener("keydown", Ship.onKeyDown(state));
+    document |> Document.addEventListener("keydown", Ship.onKeyDown(state));
     dispatch(Actions.ClearInGameState);
   }
 };
@@ -33,17 +33,9 @@ let start: stageType = {
   willMount: (_) => {
     let rec onClick = (_) => {
       goTo(inGame);
-      Webapi.Dom.Document.removeEventListener(
-        "click",
-        onClick,
-        Webapi.Dom.document
-      );
+      Document.removeEventListener("click", onClick, document);
     };
-    Webapi.Dom.Document.addEventListener(
-      "click",
-      onClick,
-      Webapi.Dom.document
-    );
+    Document.addEventListener("click", onClick, document);
   },
   render: (ctx, state) => StartBg.render(ctx, state.screen),
   willDestroy: (_) => ()
