@@ -21,18 +21,29 @@ type shot = {
   height: float
 };
 
-type shotsState = {
+type shotState = {
   itemModel: shot,
   items: list(shot)
 };
 
-type alienState = {potentialSprite: option(HtmlImage.t)};
+type alien = {
+  x: float,
+  y: float,
+  potentialSprite: option(HtmlImage.t),
+  width: float,
+  height: float
+};
+
+type alienState = {
+  itemModel: alien,
+  items: list(alien)
+};
 
 type rootState = {
   screen: screenState,
   ship: shipState,
   alien: alienState,
-  shots: shotsState
+  shot: shotState
 };
 
 type stageType = {

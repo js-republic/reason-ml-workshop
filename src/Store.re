@@ -25,7 +25,7 @@ let store: storeType(rootState) = {
       height: 62.,
       width: 60.
     },
-    shots: {
+    shot: {
       itemModel: {
         potentialSprite: None,
         width: 8.,
@@ -36,7 +36,14 @@ let store: storeType(rootState) = {
       items: []
     },
     alien: {
-      potentialSprite: None
+      itemModel: {
+        potentialSprite: None,
+        width: 30.,
+        height: 30.,
+        x: 0.,
+        y: 0.
+      },
+      items: []
     }
   },
   stage: None
@@ -48,7 +55,8 @@ let applyReducer = (elapsedTime: float) : unit => {
     |> List.fold_left(
          (state, action) => {
            ...store.reducer(elapsedTime, state, action),
-           shots: Shot.shotsReducer(elapsedTime, state.shots, action)
+           shot: Shot.shotsReducer(elapsedTime, state.shot, action),
+           alien: Alien.shotsReducer(elapsedTime, state.shot, action)
          },
          store.state
        );
