@@ -20,7 +20,8 @@ let store: storeType(rootState) = {
     ship: {
       potentialSprite: None,
       potentialShotImg: None,
-      xPos: 0,
+      x: 0.,
+      y: 400. -. 62.,
       height: 62.,
       width: 60.
     },

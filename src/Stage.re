@@ -20,7 +20,7 @@ let inGame: stageType = {
   },
   render: (ctx, state) => {
     InGameBg.render(ctx, state.screen);
-    Ship.render(ctx, state);
+    Ship.render(ctx, state.ship);
     state.shots.items |> List.iter(Shot.render(ctx));
   },
   willDestroy: state => {

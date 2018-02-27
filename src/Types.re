@@ -7,7 +7,8 @@ type screenState = {
 type shipState = {
   potentialSprite: option(HtmlImage.t),
   potentialShotImg: option(HtmlImage.t),
-  xPos: int,
+  x: float,
+  y: float,
   height: float,
   width: float
 };
