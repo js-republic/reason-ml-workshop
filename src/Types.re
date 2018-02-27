@@ -12,14 +12,30 @@ type shipState = {
   width: float
 };
 
+type shot = {
+  x: float,
+  y: float,
+  potentialSprite: option(HtmlImage.t),
+  width: float,
+  height: float
+};
+
+type shotState = {
+  itemModel: shot,
+  items: list(shot)
+};
+
 type alienState = {potentialSprite: option(HtmlImage.t)};
 
-type render('a) = (Webapi.Canvas.Canvas2d.t, 'a) => unit;
-
-type stage('b) = {renderers: list(render('b))};
-
 type rootState = {
-  mutable screen: screenState,
-  mutable ship: shipState,
-  mutable alien: alienState
+  screen: screenState,
+  ship: shipState,
+  alien: alienState,
+  shots: shotState
+};
+
+type stageType = {
+  willMount: rootState => unit,
+  render: (Webapi.Canvas.Canvas2d.t, rootState) => unit,
+  willDestroy: rootState => unit
 };

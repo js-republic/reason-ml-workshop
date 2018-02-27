@@ -1,5 +1,4 @@
-let onKeyDown = (event: Dom.event) : unit => Js.log(event);
-
+/*let onKeyDown = (event: Dom.event) : unit => Js.log(event);*/
 let willMount = () => ();
 
 let willDestroy = () => ();

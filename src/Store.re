@@ -1,26 +1,16 @@
 open Types;
 
-open Actions;
-
-let startStage: stage(rootState) = {renderers: []};
-
-let inGameStage: stage(rootState) = {
-  renderers: [InGameStage.render, Ship.render]
-};
-
-let endStage: stage(rootState) = {renderers: []};
-
+/*willMount: (Types.rootState) => (),*/
 type storeType('state) = {
-  mutable actionsToReduce: list(bootstrapAction),
-  mutable reducer: (float, 'state, bootstrapAction) => 'state,
-  mutable stage: stage('state),
-  mutable state: 'state
+  mutable actions: list(Actions.all),
+  mutable reducer: (float, 'state, Actions.all) => 'state,
+  mutable state: 'state,
+  mutable stage: option(stageType)
 };
 
 let store: storeType(rootState) = {
-  stage: inGameStage,
   reducer: Reducer.mainReducer,
-  actionsToReduce: [],
+  actions: [],
   state: {
     screen: {
       height: 400.,
@@ -34,11 +24,29 @@ let store: storeType(rootState) = {
       height: 62.,
       width: 60.
     },
+    shots: {
+      itemModel: {
+        potentialSprite: None,
+        width: 8.,
+        height: 30.,
+        x: 0.,
+        y: 0.
+      },
+      items: []
+    },
     alien: {
       potentialSprite: None
     }
-  }
+  },
+  stage: None
 };
 
-let dispatch = (action: bootstrapAction) =>
-  store.actionsToReduce = store.actionsToReduce @ [action];
+let applyReducer = (elapsedTime: float) : unit => {
+  store.state =
+    store.actions |> List.fold_left(store.reducer(elapsedTime), store.state);
+  store.actions = [];
+  ();
+};
+
+let dispatch = (action: Actions.all) : unit =>
+  store.actions = store.actions @ [action];
