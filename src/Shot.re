@@ -7,7 +7,7 @@ let tickShots = (shots: list(shot), elapsedTime: float) : list(shot) =>
 
 let reducer = (state: shotState, action: Actions.all) : shotState =>
   switch action {
-  | ClearInGameState => {...state, items: []}
+  | ResetInGame => {...state, items: []}
   | Tick(elapsedTime) => {...state, items: tickShots(state.items, elapsedTime)}
   | Shot(x, y) => {...state, items: state.items @ [{...state.itemModel, x, y}]}
   | _ => state

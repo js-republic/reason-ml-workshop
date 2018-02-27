@@ -31,7 +31,8 @@ type alien = {
   y: float,
   potentialSprite: option(HtmlImage.t),
   width: float,
-  height: float
+  height: float,
+  lastSpawn: int
 };
 
 type alienState = {
