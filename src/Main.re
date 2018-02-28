@@ -7,7 +7,7 @@ open Store;
 type canvasContext = Webapi.Canvas.Canvas2d.t;
 
 let rec onFrame = (ctx: canvasContext, lastTime: float, newTime: float) => {
-  dispatch(Actions.Tick(newTime -. lastTime));
+  dispatch(Tick(newTime -. lastTime));
   applyReducers();
   switch store.stage {
   | Some(stage) => stage.render(ctx, store.state)
@@ -18,7 +18,7 @@ let rec onFrame = (ctx: canvasContext, lastTime: float, newTime: float) => {
 };
 
 let runGame = (ctx: canvasContext) : unit => {
-  Stage.goTo(Stage.inGame);
+  Stage.goTo(Stage.start);
   Webapi.requestAnimationFrame(onFrame(ctx, 0.));
 };
 
