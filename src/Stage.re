@@ -19,7 +19,7 @@ let inGame: stageType = {
     dispatch(Actions.ResetInGame);
   },
   render: (ctx, state) => {
-    InGameBg.render(ctx, state.screen);
+    Bg.renderInGame(ctx, state.screen);
     Ship.render(ctx, state.ship);
     state.shot.shots |> List.iter(Shot.render(ctx));
     state.alien.aliens |> List.iter(Alien.render(ctx));
@@ -36,6 +36,6 @@ let start: stageType = {
     };
     Document.addEventListener("click", onClick, document);
   },
-  render: (ctx, state) => StartBg.render(ctx, state.screen),
+  render: (ctx, state) => Bg.renderStartStage(ctx, state.screen),
   willDestroy: (_) => ()
 };
