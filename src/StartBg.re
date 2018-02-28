@@ -1,10 +1,6 @@
 open Webapi.Canvas.Canvas2d;
 
-let willMount = state => ();
-
-let willDestroy = state => ();
-
-let render = (ctx: Webapi.Canvas.Canvas2d.t, state: Types.screenState) => {
+let render = (ctx: t, state: Types.screenState) => {
   setFillStyle(ctx, String, "black");
   ctx |> beginPath;
   ctx |> rect(~x=0., ~y=0., ~w=state.width, ~h=state.height);

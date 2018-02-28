@@ -6,7 +6,6 @@ type screenState = {
 
 type shipState = {
   potentialSprite: option(HtmlImage.t),
-  potentialShotImg: option(HtmlImage.t),
   x: float,
   y: float,
   height: float,
@@ -23,7 +22,7 @@ type shot = {
 
 type shotState = {
   itemModel: shot,
-  items: list(shot)
+  shots: list(shot)
 };
 
 type alien = {
@@ -32,12 +31,13 @@ type alien = {
   potentialSprite: option(HtmlImage.t),
   width: float,
   height: float,
-  lastSpawn: int
+  direction: int
 };
 
 type alienState = {
   itemModel: alien,
-  items: list(alien)
+  lastSpawn: float,
+  aliens: list(alien)
 };
 
 type rootState = {

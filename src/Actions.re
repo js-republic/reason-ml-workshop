@@ -1,5 +1,5 @@
 type all =
-  | ResetInGameState
+  | ResetInGame
   | Tick(float)
   | ShipImageLoaded(HtmlImage.t)
   | BgImageLoaded(HtmlImage.t)

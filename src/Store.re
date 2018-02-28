@@ -19,7 +19,6 @@ let store: storeType(rootState) = {
     },
     ship: {
       potentialSprite: None,
-      potentialShotImg: None,
       x: 0.,
       y: 400. -. 62.,
       height: 62.,
@@ -33,7 +32,7 @@ let store: storeType(rootState) = {
         x: 0.,
         y: 0.
       },
-      items: []
+      shots: []
     },
     alien: {
       itemModel: {
@@ -41,9 +40,11 @@ let store: storeType(rootState) = {
         width: 30.,
         height: 30.,
         x: 0.,
-        y: 0.
+        y: 0.,
+        direction: 1
       },
-      items: []
+      lastSpawn: 0.,
+      aliens: []
     }
   },
   stage: None

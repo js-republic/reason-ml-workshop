@@ -16,13 +16,13 @@ let goTo = (stage: stageType) => {
 let inGame: stageType = {
   willMount: state => {
     document |> Document.addEventListener("keydown", Ship.onKeyDown(state));
-    dispatch(Actions.ClearInGameState);
+    dispatch(Actions.ResetInGame);
   },
   render: (ctx, state) => {
     InGameBg.render(ctx, state.screen);
     Ship.render(ctx, state.ship);
-    state.shot.items |> List.iter(Shot.render(ctx));
-    state.alien.items |> List.iter(Alien.render(ctx));
+    state.shot.shots |> List.iter(Shot.render(ctx));
+    state.alien.aliens |> List.iter(Alien.render(ctx));
   },
   willDestroy: state =>
     document |> Document.removeEventListener("keydown", Ship.onKeyDown(state))
