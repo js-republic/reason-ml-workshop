@@ -140,7 +140,7 @@ let reducer =
 
 ---
 
-# Activer l'armement de l'enterprise
+## Activer l'armement de l'enterprise
 
 Se déplacer c'est déjà très bien, mais nos défenses sont toujours inertes et les aliens se rapprochent, le temps devient notre ennemi !
 
@@ -208,3 +208,140 @@ Doc du canon à Ion Mark III :
 
 * <http://2ality.com/2017/12/functions-reasonml.html#example-piping-lists>
 * <http://2ality.com/2018/01/lists-arrays-reasonml.html#more-ways-of-creating-lists>
+
+## Detection des aliens
+
+Les éclaireurs nous signalent que les Aliens disposent d'un système de camouflage les rendants indetectables à nos radars.
+
+C'est la fin !
+
+> Heuresement, oreilles pointues à une solution : A s'appuyant sur l'intelligence actificielle du vaisseau et des données des nombreuses batailles précédentes, Spock est arrivé à déterminer qu'elle sera la trajectoire exacte des Aliens pendant leur attaque. Il propose alors de simuler ces trajectoires dans l'écran de contrôle afin de ne plus être aveugle !
+
+Pour ce faire, nous allons modifier le radar à onde courte d'alien implémenter dans le `src/Alien_reducer.re` afin de lui rajouter l'action `Tick` émise par l'intelligence actificielle à chaque boucle. Nous pourrons ainsi que mettre à jour les propriétés `aliens` et `lastSpawn` de path du store `state.alien`. Elles représentent respectivement la liste des aliens connus et la timestamp de la dernier apparation d'un alien.
+
+Spock a déterminé que les aliens allaient suivre un intinéraire en serpentin :
+
+```
+--O--O--O-->
+            |
+<--O--O--O--
+|
+--O--O--O-->
+            |
+           \ /
+```
+
+La aliens arriveront toutes les 600 ms à une vitesse de 0.3 \* le temps entre chaque boucle. Les aliens ont un sens de `direction` exprimé sous la forme d'un entier égal à 1 quand ils vont de gauche à droite et -1 quand ils vont droite à gauche (cf `alien` ligne 28 dans le fichier `src/Types.re`. Chaque fois que les aliens arrivent aux bords de la carte, ils font demi-tour et descendent de 40 pas.
+
+<details>
+<summary><i>Découvrer la solution ici</i></summary>
+<p>
+<pre>
+let moveAlien = (elapsedTime: float, a: alien) : alien => {
+  let x = a.x +. elapsedTime *. 0.3 *. float_of_int(a.direction);
+  switch (x > 0., x < 600.) {
+  | (true, true) => {...a, x}
+  | (false, true) => {
+      ...a,
+      x: 0.,
+      y: a.y +. 40.,
+      direction: a.direction * (-1)
+    }
+  | (true, false) => {
+      ...a,
+      x: 600. -. a.height,
+      y: a.y +. 40.,
+      direction: a.direction * (-1)
+    }
+  | _ => failwith("Impossible case ...")
+  };
+};
+
+let moveAliens = (aliens: list(alien), elapsedTime: float) : list(alien) =>
+aliens
+|> List.map(moveAlien(elapsedTime))
+|> List.filter((a: alien) => a.y < 400.);
+
+let reducer =
+(elapsedTime: float, state: alienState, action: Actions.all)
+: alienState => {
+let now = Js.Date.now();
+switch action {
+| AlienImageLoaded(img) => {
+...state,
+itemModel: {
+...state.itemModel,
+potentialSprite: Some(img)
+}
+}
+| ResetInGame => {...state, lastSpawn: now}
+| Tick =>
+let hasToRespawn = now -. state.lastSpawn > 600.;
+let aliens =
+moveAliens(
+hasToRespawn ? state.aliens @ [state.itemModel] : state.aliens,
+elapsedTime
+);
+{...state, lastSpawn: hasToRespawn ? now : state.lastSpawn, aliens};
+| \_ => state
+};
+};
+
+</pre>
+</p>
+</details>
+
+## La collision !
+
+L'entreprise en presque prêt ! Seule le système de detection des colisions reste inopérant. Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsabile de prendre les aliens et les tirs de canon à Ion et de ne resortir que ceux qui n'ont pas eu de colision entre-eux :
+
+<details>
+<summary><i>Découvrer la solution ici</i></summary>
+<p>
+<pre>
+open Types;
+
+open List;
+
+let removeKilledBy = (shot: shot, aliens: list(alien)) : list(alien) =>
+aliens
+|> filter(alien =>
+! (
+shot.x < alien.x
++. alien.width
+&& shot.x
++. shot.width > alien.x
+&& shot.y < alien.y
++. alien.height
+&& shot.height
++. shot.y > alien.y
+)
+);
+
+let findNotCollided =
+(aliens: list(alien), shots: list(shot))
+: (list(alien), list(shot)) => {
+let initValue: (list(alien), list(shot)) = (aliens, []);
+fold_left(
+((aliensStillAlive, missedShots), shot: shot) => {
+let newAliensStillAlive = aliensStillAlive |> removeKilledBy(shot);
+let isShotHit = length(newAliensStillAlive) != length(aliensStillAlive);
+let newMissedShot = isShotHit ? missedShots : missedShots @ [shot];
+Js.log(
+"colision "
+++ string_of_bool(isShotHit)
+++ " :: "
+++ string_of_int(length(newMissedShot))
+++ " :: "
+++ string_of_int(length(newAliensStillAlive))
+);
+(newAliensStillAlive, newMissedShot);
+},
+initValue,
+shots
+);
+};
+
+</pre>
+</p>
+</details>
