@@ -172,6 +172,8 @@ switch (Webapi.Dom.KeyboardEvent.code(event)) {
 
 Nous pouvons désormais bien envoyé les instructions de tir, mais le canon reste inactif... Regarder dans le reducer `src/Shot_reducer.re`, l'action `Fire` n'est probablement pas géré. De même, chaque projectile du canon à Ion doit-être guidé grâce à l'action `Tick` dispatché par l'intelligence artificielle à chaque boucle. Cela comprend aussi l'auto-destruction des projectiles quand ils sortent de l'écran de contrôle - Faudrait pas dégomer une étoile noire par erreur ...
 
+<https://reasonml.github.io/api/List.html>
+
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
@@ -253,9 +255,9 @@ direction: a.direction * (-1)
 ...a,
 x: Constants.width -. a.width,
 y: a.y +. 70.,
-direction: a.direction * (-1)
+direction: a.direction _ (-1)
 }
-| * => failwith("Impossible case ...")
+| _ => failwith("Impossible case ...")
 };
 };
 
