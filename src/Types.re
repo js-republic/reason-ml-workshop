@@ -48,7 +48,7 @@ type rootState = {
 };
 
 type stageType = {
-  willMount: rootState => unit,
+  willMount: unit => unit,
   render: (Webapi.Canvas.Canvas2d.t, rootState) => unit,
-  willDestroy: rootState => unit
+  willDestroy: unit => unit
 };

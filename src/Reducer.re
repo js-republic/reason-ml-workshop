@@ -1,14 +1,21 @@
 open Types;
 
-let main = (state: rootState, action: Actions.all) : rootState =>
+let main = (_, state: rootState, action: Actions.all) : rootState =>
   switch action {
-  | ShipImageLoaded(img) => {
+  | Tick =>
+    let (aliens, shots) =
+      Colision.findNotCollided(state.alien.aliens, state.shot.shots);
+    {
       ...state,
-      ship: {
-        ...state.ship,
-        potentialSprite: Some(img)
+      shot: {
+        ...state.shot,
+        shots
+      },
+      alien: {
+        ...state.alien,
+        aliens
       }
-    }
+    };
   | BgImageLoaded(img) => {
       ...state,
       screen: {
