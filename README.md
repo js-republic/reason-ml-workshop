@@ -316,7 +316,7 @@ elapsedTime
 
 ## La collision !
 
-L'entreprise est presque prêt ! Seule le système de detection des colisions reste inopérant. Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsabile de prendre les aliens et les tirs de canon à Ion et de ne resortir que ceux qui n'ont pas eu de colision entre-eux :
+L'entreprise est presque prêt ! Seul le système de detection des colisions reste inopérant. Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsabile de prendre les aliens et les tirs de canon à Ion et de ne resortir que ceux qui n'ont pas eu de colision entre-eux :
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
