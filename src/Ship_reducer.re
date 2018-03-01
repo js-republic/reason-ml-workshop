@@ -9,7 +9,5 @@ let reducer =
     : Types.shipState =>
   switch action {
   | ShipImageLoaded(img) => {...state, potentialSprite: Some(img)}
-  | GoLeft => {...state, x: max(0., state.x -. elapsedTime *. 0.5)}
-  | GoRight => {...state, x: min(height, state.x +. elapsedTime *. 0.5)}
   | _ => state
   };
