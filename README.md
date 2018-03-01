@@ -16,7 +16,7 @@ ReasonML est fortement lié à un autre projet nomé [Bucklescript](bucklescript
 
 ![ReasonMl Game screen](./src/assets/reasonml-game.png)
 
-> Capitaine Kirk, les aliens débarquent et le système de défense de l'enterprise est hors service, nous avons besoin de vous !
+> Capitaine Kirk, les aliens débarquent et plusieurs systèmes l'Enterprise NC-1701 est hors service, nous avons besoin de vous !
 
 Pour le réparer, il vous faudra d'abord récupérer les sources du centre de contrôle ici :
 
@@ -39,11 +39,12 @@ Il ne vous restera qu'a ouvrir le panneau de contrôle (aka. le fichier `index.h
 Votre mission commence ici capitaine, nous comptons sur vous et votre fine équipe.
 
 Vous retrouverez un rappel synthétique de la syntaxe ReasonMl ici :
-<https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
+
+* <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
 
 ## GPS intergalactic brouillé
 
-Votre première tâche va consister a réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant celui-ci n'apparait même sur la carte ...
+Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant celui-ci n'apparait même sur la carte ...
 
 Rendez-vous dans le fichier `src/Ship.re`, pour réactiver le rendu de notre vaisseau sur la carte en implémentant la fonction `render` :
 
@@ -56,13 +57,13 @@ let render = (ctx, state: Types.shipState) =>
 
 L'ensemble des plans du vaisseau ainsi que les types utilisés dans le système sont visibles dans le fichier `src/Types.re`.
 
-> L'ingénieur en chef Scott, nous dit via le communicateur que l'image de du vaisseau est réprésenté sous la forme d'une `option(HtmlImage.t)` car elle n'est pas chargée dés l'initialisation du vaisseau. Pour en savoir plus une nous envois l'spatio-lien suivant : <https://reasonml.github.io/docs/en/variant.html#option>
+> L'ingénieur en chef Scott, nous dit via le communicateur que l'image du vaisseau est réprésentée sous la forme d'une `option(HtmlImage.t)` car elle n'est pas chargée dés l'initialisation du vaisseau. Pour en savoir plus, il nous envois le Spatio-lien suivant : <https://reasonml.github.io/docs/en/variant.html#option>
 
 La fonction `render` prends en argument, en premier le context du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième l'état courant du vaisseau visible dans le fichier `src/Types.re` à la ligne 7.
 
 > Spock vous signale qu'une fonction `drawImage` existe dans le fichier `src/HtmlImage.re` à la ligne 7. Cette fonction a la particularité d'utiliser les `labeled arguments` (<https://reasonml.github.io/docs/en/function.html#labeled-arguments>).
 
-Il nous transmet aussi une liste de documents utiles :
+Il nous transmet aussi un guide sur `pattern matching` :
 
 * <https://reasonml.github.io/docs/en/pattern-matching.html#usage>
 
