@@ -163,7 +163,7 @@ let reducer =
 
 Se déplacer c'est déjà très bien, mais nos défenses sont toujours inertes et les aliens se rapprochent, le temps devient notre ennemi !
 
-Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origine s du vaiseau.
+Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origines du vaiseau.
 
 > L'ingénieur Scott rappel que l'on peut accéder exeptionellement aux données du store du vaisseau avec l'expression `Store.store.state`. Cela sera bien utile pour récupérer notre position courante.
 
@@ -189,7 +189,7 @@ switch (Webapi.Dom.KeyboardEvent.code(event)) {
 </p>
 </details>
 
-Nous pouvons désormais bien envoyé les instructions de tir, mais le canon reste inactif... Regarder dans le reducer `src/Shot_reducer.re`, l'action `Fire` n'est probablement pas géré. De même, chaque projectile du canon à Ion doit-être guidé grâce à l'action `Tick` dispatché par l'intelligence artificielle à chaque boucle. Cela comprend aussi l'auto-destruction des projectiles quand ils sortent de l'écran de contrôle - Faudrait pas dégomer une étoile noire par erreur ...
+Nous pouvons désormais bien envoyé les instructions de tir, mais le canon reste inactif... Regarder dans le reducer `src/Shot_reducer.re`, l'action `Fire` n'est probablement pas gérée. De même, chaque projectile du canon à Ion doit-être guidé grâce à l'action `Tick` dispatché par l'intelligence artificielle à chaque boucle. N'oubliez pas d'auto-détruire les projectiles quand ils sortent de l'écran de contrôle - Faudrait pas dégomer une étoile noire par erreur ...
 
 <https://reasonml.github.io/api/List.html>
 
@@ -236,9 +236,9 @@ Les éclaireurs nous signalent que les Aliens disposent d'un système de camoufl
 
 C'est la fin !
 
-> Heuresement, oreilles pointues à une solution : A s'appuyant sur l'intelligence actificielle du vaisseau et des données des nombreuses batailles précédentes, Spock est arrivé à déterminer qu'elle sera la trajectoire exacte des Aliens pendant leur attaque. Il propose alors de simuler ces trajectoires dans l'écran de contrôle afin de ne plus être aveugle !
+> Heureusement, oreilles pointues à une solution : A s'appuyant sur l'intelligence actificielle du vaisseau et des données des nombreuses batailles précédentes, Spock est arrivé à déterminer qu'elle sera la trajectoire exacte des Aliens pendant leur attaque. Il propose alors de simuler ces trajectoires dans l'écran de contrôle afin de ne plus être aveugle !
 
-Pour ce faire, nous allons modifier le radar à onde courte d'alien implémenter dans le `src/Alien_reducer.re` afin de lui rajouter l'action `Tick` émise par l'intelligence actificielle à chaque boucle. Nous pourrons ainsi que mettre à jour les propriétés `aliens` et `lastSpawn` de path du store `state.alien`. Elles représentent respectivement la liste des aliens connus et la timestamp de la dernier apparation d'un alien.
+Pour ce faire, nous allons modifier le radar à onde courte d'alien implémenter dans le `src/Alien_reducer.re` afin de gérer l'action `Tick` émise par l'intelligence actificielle. Nous pourrons ainsi mettre à jour les propriétés `aliens` et `lastSpawn` de path du store `state.alien`. Elles représentent respectivement la liste des aliens connus et le timestamp de la derniere apparation d'un alien.
 
 Spock a déterminé que les aliens allaient suivre un intinéraire en serpentin :
 
@@ -252,7 +252,7 @@ Spock a déterminé que les aliens allaient suivre un intinéraire en serpentin 
            \ /
 ```
 
-La aliens arriveront toutes les 600 ms à une vitesse de 0.3 \* le temps entre chaque boucle. Les aliens ont un sens de `direction` exprimé sous la forme d'un entier égal à 1 quand ils vont de gauche à droite et -1 quand ils vont droite à gauche (cf `alien` ligne 28 dans le fichier `src/Types.re`. Chaque fois que les aliens arrivent aux bords de la carte, ils font demi-tour et descendent de 40 pas.
+La aliens arriveront toutes les 600 ms à une vitesse de 0.3 x le temps entre chaque boucle. Les aliens ont un sens de `direction` exprimé sous la forme d'un entier égal à 1 quand ils vont de gauche à droite et -1 quand ils vont droite à gauche (cf `alien` ligne 28 dans le fichier `src/Types.re`). Chaque fois que les aliens arrivent aux bords de la carte, ils font demi-tour et descendent de 40.
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
@@ -316,7 +316,7 @@ elapsedTime
 
 ## La collision !
 
-L'entreprise en presque prêt ! Seule le système de detection des colisions reste inopérant. Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsabile de prendre les aliens et les tirs de canon à Ion et de ne resortir que ceux qui n'ont pas eu de colision entre-eux :
+L'entreprise est presque prêt ! Seule le système de detection des colisions reste inopérant. Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsabile de prendre les aliens et les tirs de canon à Ion et de ne resortir que ceux qui n'ont pas eu de colision entre-eux :
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
