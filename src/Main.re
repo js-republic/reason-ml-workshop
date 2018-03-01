@@ -28,8 +28,8 @@ switch (Webapi.Dom.Document.getElementById("game", Webapi.Dom.document)) {
   runGame(ctx);
   Js.Promise.all([|
     loadImage("assets/ship.png"),
-    loadImage("assets/space2.png"),
-    loadImage("assets/normal-alien.png"),
+    loadImage("assets/bg.png"),
+    loadImage("assets/alien.png"),
     loadImage("assets/shot.png")
   |])
   |> Js.Promise.then_(imgs =>

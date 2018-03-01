@@ -13,14 +13,14 @@ let store: storeType(rootState) = {
   actions: [],
   state: {
     screen: {
-      height: 400.,
-      width: 600.,
+      height: Constants.height,
+      width: Constants.width,
       potentialBg: None
     },
     ship: {
       potentialSprite: None,
-      x: 0.,
-      y: 400. -. 62.,
+      x: Constants.width /. 2. -. 30.,
+      y: Constants.height -. 62.,
       height: 62.,
       width: 60.
     },
@@ -37,9 +37,9 @@ let store: storeType(rootState) = {
     alien: {
       itemModel: {
         potentialSprite: None,
-        width: 30.,
-        height: 30.,
-        x: 30.,
+        width: 64.,
+        height: 64.,
+        x: 0.,
         y: 0.,
         direction: 1
       },
