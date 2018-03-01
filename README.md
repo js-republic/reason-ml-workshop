@@ -14,6 +14,8 @@ ReasonML est fortement lié à un autre projet nomé [Bucklescript](bucklescript
 
 ## Démarrage
 
+![ReasonMl Game screen](./src/assets/reasonml-game.png)
+
 > Capitaine Kirk, les aliens débarquent et le système de défense de l'enterprise est hors service, nous avons besoin de vous !
 
 Pour le réparer, il vous faudra d'abord récupérer les sources du centre de contrôle ici :
