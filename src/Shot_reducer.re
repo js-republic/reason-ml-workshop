@@ -18,6 +18,6 @@ let reducer =
     }
   | ResetInGame => {...state, shots: []}
   | Tick => {...state, shots: tickShots(state.shots, elapsedTime)}
-  | Shot(x, y) => {...state, shots: state.shots @ [{...state.itemModel, x, y}]}
+  | Fire(x, y) => {...state, shots: state.shots @ [{...state.itemModel, x, y}]}
   | _ => state
   };

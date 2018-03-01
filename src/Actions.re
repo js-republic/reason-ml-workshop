@@ -7,4 +7,4 @@ type all =
   | ShotImageLoaded(HtmlImage.t)
   | GoLeft
   | GoRight
-  | Shot(float, float);
+  | Fire(float, float);

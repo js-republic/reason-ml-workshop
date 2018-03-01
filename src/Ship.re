@@ -1,26 +1,21 @@
-let onSpace = (state: Types.rootState) => {
-  let y = state.screen.height -. state.ship.height;
-  let x = state.ship.x +. state.ship.width /. 2.;
-  Store.dispatch(Actions.Shot(x, y));
+let onSpace = (state: Types.shipState) => {
+  let y = Constants.height -. state.height;
+  let x = state.x +. state.width /. 2.;
+  Store.dispatch(Actions.Fire(x, y));
 };
 
 let onKeyUp = (event: Dom.keyboardEvent) : unit =>
   switch (Webapi.Dom.KeyboardEvent.code(event)) {
   | "ArrowLeft" => Store.dispatch(Actions.GoLeft)
   | "ArrowRight" => Store.dispatch(Actions.GoRight)
-  | "Space" => onSpace(Store.store.state)
+  | "Space" => onSpace(Store.store.state.ship)
   | _ => ()
   };
 
 let render = (ctx, state: Types.shipState) =>
   switch state.potentialSprite {
   | Some(sprite) =>
-    ctx
-    |> HtmlImage.drawImage(
-         sprite,
-         int_of_float(state.x),
-         int_of_float(state.y)
-       );
+    ctx |> HtmlImage.drawImage(sprite, ~x=state.x, ~y=state.y);
     ();
   | None => ()
   };

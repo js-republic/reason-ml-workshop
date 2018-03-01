@@ -4,7 +4,7 @@ type t;
 exception ImageNotFound(string);
 
 [@bs.send.pipe : Webapi.Canvas.Canvas2d.t]
-external drawImage : (t, int, int) => unit = "";
+external drawImage : (t, ~x: float, ~y: float) => unit = "";
 
 [@bs.new] external makeImage : unit => t = "Image";
 
