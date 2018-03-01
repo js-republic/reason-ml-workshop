@@ -99,7 +99,7 @@ let onKeyUp = (event: Dom.keyboardEvent) : unit =>
   };
 ```
 
-Et le reducer du vaisseau `src/Ship_reducer.re` pour gérer les actions afin d'appliquer une translation du vaisseau en `y` en fonction de la direction que vous avez dispatché...
+Le reducer du vaisseau `src/Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `y` en fonction de la direction que vous avez dispatché...
 L'ingénieur Scott, nous fait remarqué que ce reducer est un modèle un peu particulié car il prend aussi en charge le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en millisecond. Cela permettra de d'avoir une vitesse constante.
 
 ```reason
@@ -108,6 +108,18 @@ let reducer = (elapsedTime: float, state: Types.shipState, action: Ations.all): 
   | ShipImageLoaded(img) => {...state, potentialSprite: Some(img)}
   | _ => state
   };
+```
+
+> _Un Rappel très important_ : Rappelez-vous que dans notre galaxie, les coordonées (0, 0) sont celles du coin haut gauche comme illustré ci-dessous :
+
+```
+0------------------>
+|
+|
+|
+|
+|      (ship)
+\/
 ```
 
 > Des fonctions `max` et `min` sont disponibles ainsi qu'un module `Constants` contenant la taille de la carte. Et rappelez-vous, vous devez toujours renvoyer une nouvelle instance du state jamais le modifiez directement.
@@ -151,9 +163,9 @@ let reducer =
 
 Se déplacer c'est déjà très bien, mais nos défenses sont toujours inertes et les aliens se rapprochent, le temps devient notre ennemi !
 
-Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origine celle du vaiseau.
+Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origine s du vaiseau.
 
-> L'ingénieur Scott rappel que l'on peut accéder exeptionellement aux donnés du store du vaisseau avec l'expression `Store.store.state`. Cela sera bien utile pour récupérer notre position courante.
+> L'ingénieur Scott rappel que l'on peut accéder exeptionellement aux données du store du vaisseau avec l'expression `Store.store.state`. Cela sera bien utile pour récupérer notre position courante.
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
