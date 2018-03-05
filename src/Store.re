@@ -54,10 +54,13 @@ let applyReducers = (elapsedTime: float) : unit => {
   store.state =
     List.fold_left(
       (state, action) => {
-        ...store.reducer(elapsedTime, state, action),
-        shot: Shot_reducer.reducer(elapsedTime, state.shot, action),
-        alien: Alien_reducer.reducer(elapsedTime, state.alien, action),
-        ship: Ship_reducer.reducer(elapsedTime, state.ship, action)
+        let root = store.reducer(elapsedTime, state, action);
+        {
+          screen: root.screen,
+          shot: Shot_reducer.reducer(elapsedTime, root.shot, action),
+          alien: Alien_reducer.reducer(elapsedTime, root.alien, action),
+          ship: Ship_reducer.reducer(elapsedTime, root.ship, action)
+        };
       },
       store.state,
       store.actions
