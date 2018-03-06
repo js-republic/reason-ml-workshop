@@ -10,13 +10,16 @@ ReasonML est fortement lié à un autre projet nomé [Bucklescript](bucklescript
 
 * Un ordinateur... c'est mieux :)
 * NodeJS & NPM installé
-* Visual Studio Code (optionel, mais a la meilleur intégration pour l'instant) et le plugin ReasonML installé. cf. [Package ReasonML](https://github.com/reasonml-editor/vscode-reasonml)
+* Visual Studio Code
+* _optionel mais recommandé_
+  * [Merlin](https://reasonml.github.io/docs/en/extra-goodies.html#merlin) & ReasonML installé en global : <https://reasonml.github.io/docs/en/global-installation.html>
+  * Le plugin ReasonML installé. cf. [Package ReasonML](https://github.com/reasonml-editor/vscode-reasonml)
 
 ## Démarrage
 
 ![ReasonMl Game screen](./src/assets/reasonml-game.png)
 
-> Capitaine Kirk, les aliens débarquent et plusieurs systèmes l'Enterprise NC-1701 est hors service, nous avons besoin de vous !
+> Capitaine Kirk, les aliens débarquent et plusieurs systèmes de l'Enterprise NC-1701 sont hors service, nous avons besoin de vous !
 
 Pour le réparer, il vous faudra d'abord récupérer les sources du centre de contrôle ici :
 
@@ -31,6 +34,10 @@ npm install
 ```
 
 ```bash
+npm run init
+```
+
+```bash
 npm start
 ```
 
@@ -38,15 +45,47 @@ Il ne vous restera qu'a ouvrir le panneau de contrôle (aka. le fichier `index.h
 
 Votre mission commence ici capitaine, nous comptons sur vous et votre fine équipe.
 
+## Informations générales
+
+Structure de fichier :
+
+```
+src
+├── Actions.re        <- Contient les différents type d'actions utilisables dans le système
+├── Alien.re          <- Dessine les aliens
+├── Alien_reducer.re  <- Reducer de l'état des aliens
+├── Bg.re             <- Dessine les fonds d'écran
+├── Colision.re       <- Permet de détecter les colisions
+├── Constants.re      <- Contient les constantes comme la hauteur et la largeur de l'écran
+├── Image.re          <- Fichier utilitaire servant à dessiner les images
+├── Main.re           <- Point d'entrer et coeur du système
+├── Reducer.re        <- Reducer principal de l'application
+├── Ship.re           <- Dessine le vaisseau
+├── Ship_reducer.re   <- Reducer de l'état du vaisseau
+├── Shot.re           <- Dessine les projectiles du vaisseau
+├── Shot_reducer.re   <- Reducer de l'état des projectiles
+├── Stage.re          <- Gère les différents niveaux du jeux
+├── Store.re          <- Store du jeux qui centralise l'intégralité des données
+├── Types.re          <- Contient tous les types de l'application
+└── index.html        <- Fichier index.html à ouvrir pour voir le jeux
+__tests__
+└── All_test.re       <- Contient tous les test unitaires
+```
+
+Le système est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En claire cela signifie, que l'ensemble de tous les états de l'ensemble des élements (Ship, Shot, Alien) sont stockés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
+A chaque fois qu'un élément (Ship, Shot, Alien) désire changer une information qui le concerne, il doit dispatcher une `Action` (toutes les actions disponibles du système sont déclarées dans le fichier du même nom) à l'aide de la fonction `dispatch` du fichier `Store.re`.
+
+A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur les reducers principal, de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agréagés et construise le nouvel état du `rootState` qui servira au rendu final.
+
 Vous retrouverez un rappel synthétique de la syntaxe ReasonMl ici :
 
 * <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
 
 ## GPS intergalactic brouillé
 
-Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant celui-ci n'apparait même sur la carte ...
+Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant le vaisseau n'apparait même sur la carte ...
 
-Rendez-vous dans le fichier `src/Ship.re`, pour réactiver le rendu de notre vaisseau sur la carte en implémentant la fonction `render` :
+Rendez-vous dans le fichier `src/Ship.re`, pour réactiver le rendu de notre vaisseau sur la carte en implémentant la fonction `render`.
 
 ```reason
 let render = (ctx, state: Types.shipState) =>

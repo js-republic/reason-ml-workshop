@@ -2,17 +2,12 @@
   "name": "reason-ml-workshop",
   "version": "0.1.0",
   "scripts": {
-    "build": "bsb -make-world",
-    "start": "concurrently -c bgBlue.bold,black.bgRed.bold -n BSB,webpack 'bsb -make-world -w' 'webpack --watch'",
-    "clean": "bsb -clean-world",
-    "test": "concurrently -c bgBlue.bold,black.bgYellow.bold -n BSB,Jest 'bsb -make-world -w' 'jest --watchAll'"
+    "init": "bsb -make-world",
+    "start":
+      "concurrently -c bgBlue.bold,black.bgRed.bold,red.bgWhite.bold -n BSB,Webpack,Jest 'bsb -make-world -w' 'webpack --watch' 'jest --watchAll'",
+    "clean": "bsb -clean-world"
   },
-  "keywords": [
-    "ReasonML",
-    "BuckleScript",
-    "OCaml",
-    "Workshop"
-  ],
+  "keywords": ["ReasonML", "BuckleScript", "OCaml", "Workshop"],
   "authors": [
     "Mathieu Breton <mathieu.breton@js-republic.com>",
     "Emmanuel Ernest <emmanuel.ernest@js-republic.com>"

@@ -1,6 +1,5 @@
 open Types;
 
-/*willMount: (Types.rootState) => (),*/
 type storeType('state) = {
   mutable actions: list(Actions.all),
   mutable reducer: (float, 'state, Actions.all) => 'state,

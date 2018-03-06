@@ -1,11 +1,15 @@
+type canvasContext = Webapi.Canvas.Canvas2d.t;
+
+type image;
+
 type screenState = {
   height: float,
   width: float,
-  potentialBg: option(HtmlImage.t)
+  potentialBg: option(image)
 };
 
 type shipState = {
-  potentialSprite: option(HtmlImage.t),
+  potentialSprite: option(image),
   x: float,
   y: float,
   height: float,
@@ -15,7 +19,7 @@ type shipState = {
 type shot = {
   x: float,
   y: float,
-  potentialSprite: option(HtmlImage.t),
+  potentialSprite: option(image),
   width: float,
   height: float
 };
@@ -28,7 +32,7 @@ type shotState = {
 type alien = {
   x: float,
   y: float,
-  potentialSprite: option(HtmlImage.t),
+  potentialSprite: option(image),
   width: float,
   height: float,
   direction: int

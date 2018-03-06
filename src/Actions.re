@@ -1,10 +1,10 @@
 type all =
   | ResetInGame
   | Tick
-  | ShipImageLoaded(HtmlImage.t)
-  | BgImageLoaded(HtmlImage.t)
-  | AlienImageLoaded(HtmlImage.t)
-  | ShotImageLoaded(HtmlImage.t)
+  | ShipImageLoaded(Types.image)
+  | BgImageLoaded(Types.image)
+  | AlienImageLoaded(Types.image)
+  | ShotImageLoaded(Types.image)
   | GoLeft
   | GoRight
   | Fire(float, float);
