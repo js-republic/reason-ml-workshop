@@ -14,8 +14,6 @@ let onKeyUp = (event: Dom.keyboardEvent) : unit =>
 
 let render = (ctx, state: Types.shipState) =>
   switch state.potentialSprite {
-  | Some(sprite) =>
-    ctx |> HtmlImage.drawImage(sprite, ~x=state.x, ~y=state.y);
-    ();
+  | Some(sprite) => Image.draw(ctx, sprite, ~x=state.x, ~y=state.y)
   | None => ()
   };
