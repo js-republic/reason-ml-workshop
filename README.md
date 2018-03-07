@@ -27,7 +27,7 @@ Pour le réparer, il vous faudra d'abord récupérer les sources du centre de co
 git clone git@github.com:js-republic/reason-ml-workshop.git
 ```
 
-Vous pourrez ensuite le démarrer en rentrant dans le terminal :
+Vous pourrez ensuite le démarrer en rentrant dans le terminal à la racine du projet :
 
 ```bash
 npm install
@@ -72,14 +72,120 @@ __tests__
 └── All_test.re       <- Contient tous les test unitaires
 ```
 
-Le système est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En claire cela signifie, que l'ensemble de tous les états de l'ensemble des élements (Ship, Shot, Alien) sont stockés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
-A chaque fois qu'un élément (Ship, Shot, Alien) désire changer une information qui le concerne, il doit dispatcher une `Action` (toutes les actions disponibles du système sont déclarées dans le fichier du même nom) à l'aide de la fonction `dispatch` du fichier `Store.re`.
+Le système de l'Enterprise NC-1701 est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En claire cela signifie, que l'ensemble de tous les états (ex: position, taille, image) de chaque élement (Ship, Shot, Alien) sont regroupés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
+A chaque fois qu'un élément (Ship, Shot, Alien) désire changer une information qui le concerne, il doit dispatcher une `Action` (toutes les actions disponibles du système sont déclarées dans le fichier `Actions.re`) à l'aide de la fonction `dispatch` du fichier `Store.re`.
 
-A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur les reducers principal, de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agréagés et construise le nouvel état du `rootState` qui servira au rendu final.
+A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur le reducers principaux, celui de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agrégés et construisent le nouvel état du `rootState` qui servira au rendu.
 
-Vous retrouverez un rappel synthétique de la syntaxe ReasonMl ici :
+> Les reducers de l'Enterprise ont la particularité de prendre en plus des habituelles paramètres `action` et `state` des reducers classiques, un paramètre supplémentaire appelé `elapsedTime`. Ce paramètre de type _float_ est en fait le temps passé depuis la dernière boucle de rendu. Le temps n'est en effet pas toujours le même entre deux boucles de rendu et par conséquent avoir le temps entre deux boucles permettra d'avoir des déplacements à vitesse constante.
 
-* <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
+Voici un aperçu globale du fonctionnement du système :
+
+```
++-----------+
+|           |
+|           v
+|    +------+-------+
+|    |              |
+|    | Pre-reducer  |
+|    |              |
+|    +------+-------+
+|           |
+|           v
+|    +------+-------+
+|    |              |
+|    | Ship_reducer |
+|    | Alien_reducer|
+|    | Shot_reducer |
+|    |              |
+|    +------+-------+
+|           |
+|           v
+|    +------+-------+
+|    |              |
+|    | Post-reducer |
+|    |              |
+|    +------+-------+
+|           |
+|           v
+|    +------+-------+
+|    |              |
+|    |    Rendu     |
+|    |              |
+|    +------+-------+
+|           |
++-----------+
+```
+
+### Description du store
+
+Comme dit ci-avant le store contient tous les états de tous les éléments qui seront dessinés dans le jeux. Il convient donc de prêter une attention particulière à cet variables initialisée dans le fichier `Store.re` à ligne 14 :
+
+```javascript
+/* "rootState" état global du système */
+state:
+/* "screen" définie l'état de l'écran (pas utile pour vous) */
+{
+  screen: {
+    height: Constants.height,
+    width: Constants.width,
+    potentialBg: None
+  },
+  /* "ship" définie l'état du vaisseau */
+  ship:
+    /* "potentialSprite" est l'image potentiellement chargée du vaisseau */
+    {
+      potentialSprite: None,
+      /* x et y sont les coordonnées du vaisseau */
+      x: Constants.width /. 2. -. 30.,
+      y: Constants.height -. 62.,
+      /* height et width sont la hauteur et largeur du vaisseau */
+      height: 62.,
+      width: 60.
+    },
+  /* "shot" définie l'état de tous les projectiles */
+  shot: {
+    itemModel:
+      /* "potentialSprite" est l'image potentiellement chargée du shot */
+      {
+        potentialSprite: None,
+        /* height et width sont la hauteur et largeur d'un projectile */
+        width: 8.,
+        height: 30.,
+        /* x et y sont les coordonnées d'un projectile */
+        x: 0.,
+        y: 0.
+      },
+    /* list des projectiles actuellement déssinés */
+    shots: []
+  },
+  /* "alien" définie l'état de tous les aliens */
+  alien: {
+    itemModel:
+      /* "potentialSprite" est l'image potentiellement chargée de l'alien */
+      {
+        potentialSprite: None,
+        /* height et width sont la hauteur et largeur d'un alien */
+        width: 64.,
+        height: 64.,
+        /* x et y sont les coordonnées d'un alien */
+        x: 0.,
+        y: 0.,
+        /* "direction" est le sens de déplacement de l'alien, 1 pour de gauche à droite, -1 pour droite à gauche */
+        direction: 1
+      },
+    /* "lastSpawn" réprésente le dernier timestamp auquel un alien a été créé */
+    lastSpawn: 0.,
+    /* list des aliens actuellement déssinés */
+    aliens: []
+  }
+}
+```
+
+### Liens utiles pour tout le workshop
+
+* Rappel synthétique de la syntaxe ReasonML : <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
+* API ReasonML : <https://reasonml.github.io/api/index.html>
 
 ## GPS intergalactic brouillé
 
