@@ -12,8 +12,9 @@ let renderStartStage = (ctx: Types.canvasContext, state: Types.screenState) => {
   ();
 };
 
-let renderInGame = (ctx: Types.canvasContext, state: Types.screenState) =>
+let renderInGame =
+    (canvasContext: Types.canvasContext, state: Types.screenState) =>
   switch state.potentialBg {
-  | Some(bg) => Image.draw(ctx, bg, ~x=0., ~y=0.)
+  | Some(bg) => Image.draw(canvasContext, bg, ~x=0., ~y=0.)
   | None => ()
   };

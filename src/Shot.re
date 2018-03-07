@@ -1,5 +1,5 @@
-let render = (ctx, state: Types.shot) =>
+let render = (canvasContext: Types.canvasContext, state: Types.shot) =>
   switch state.potentialSprite {
-  | Some(img) => Image.draw(ctx, img, ~x=state.x, ~y=state.y)
+  | Some(img) => Image.draw(canvasContext, img, ~x=state.x, ~y=state.y)
   | _ => ()
   };
