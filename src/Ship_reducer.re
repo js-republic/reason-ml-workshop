@@ -2,8 +2,6 @@
 
 [@bs.scope "Math"] [@bs.val] external min : (float, float) => float = "min";
 
-open Constants;
-
 let reducer =
     (elapsedTime: float, state: Types.shipState, action: Actions.all)
     : Types.shipState =>
@@ -12,7 +10,7 @@ let reducer =
   | GoLeft => {...state, x: max(0., state.x -. elapsedTime *. 0.5)}
   | GoRight => {
       ...state,
-      x: min(height -. state.width, state.x +. elapsedTime *. 0.5)
+      x: min(Constants.height -. state.width, state.x +. elapsedTime *. 0.5)
     }
   | _ => state
   };

@@ -26,14 +26,6 @@ let findNotCollided =
       let newAliensStillAlive = aliensStillAlive |> removeKilledBy(shot);
       let isShotHit = length(newAliensStillAlive) != length(aliensStillAlive);
       let newMissedShot = isShotHit ? missedShots : missedShots @ [shot];
-      Js.log(
-        "colision "
-        ++ string_of_bool(isShotHit)
-        ++ " :: "
-        ++ string_of_int(length(newMissedShot))
-        ++ " :: "
-        ++ string_of_int(length(newAliensStillAlive))
-      );
       (newAliensStillAlive, newMissedShot);
     },
     initValue,

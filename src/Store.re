@@ -1,14 +1,12 @@
-open Types;
-
 type storeType('state) = {
   mutable actions: list(Actions.all),
   mutable preReducer: (float, 'state, Actions.all) => 'state,
   mutable postReducer: (float, 'state, Actions.all) => 'state,
   mutable state: 'state,
-  mutable stage: option(stageType)
+  mutable stage: option(Types.stageType)
 };
 
-let store: storeType(rootState) = {
+let store: storeType(Types.rootState) = {
   preReducer: Reducer.pre,
   postReducer: Reducer.post,
   actions: [],
@@ -77,8 +75,9 @@ let applyReducers = (elapsedTime: float) : unit => {
   store.state =
     List.fold_left(
       (state, action) => {
-        let preState = store.preReducer(elapsedTime, state, action);
-        let newState = {
+        let preState: Types.rootState =
+          store.preReducer(elapsedTime, state, action);
+        let newState: Types.rootState = {
           screen: preState.screen,
           shot: Shot_reducer.reducer(elapsedTime, preState.shot, action),
           alien: Alien_reducer.reducer(elapsedTime, preState.alien, action),

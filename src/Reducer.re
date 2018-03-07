@@ -1,6 +1,4 @@
-open Types;
-
-let pre = (_, state: rootState, action: Actions.all) : rootState =>
+let pre = (_, state: Types.rootState, action: Actions.all) : Types.rootState =>
   switch action {
   | Tick =>
     let (aliens, shots) =
@@ -26,4 +24,4 @@ let pre = (_, state: rootState, action: Actions.all) : rootState =>
   | _ => state
   };
 
-let post = (_, state: rootState, _) : rootState => state;
+let post = (_, state: Types.rootState, _) : Types.rootState => state;

@@ -119,7 +119,7 @@ Voici un aperçu globale du fonctionnement du système :
 
 ### Description du store
 
-Comme dit ci-avant le store contient tous les états de tous les éléments qui seront dessinés dans le jeux. Il convient donc de prêter une attention particulière à cet variables initialisée dans le fichier `Store.re` à ligne 14 :
+Comme dit ci-avant le store contient tous les états de tous les éléments qui seront dessinés dans le jeux. Il convient donc de prêter une attention particulière à cette variable initialisée dans le fichier `Store.re` à ligne 14 :
 
 ```javascript
 /* "rootState" état global du système */
@@ -182,7 +182,12 @@ state:
 }
 ```
 
-### Liens utiles pour tout le workshop
+### Informations utiles sur ReasonML
+
+Parler de JS.log : TODO
+Parler des module et leur utilisation : TODO
+
+Liens utiles :
 
 * Rappel synthétique de la syntaxe ReasonML : <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
 * API ReasonML : <https://reasonml.github.io/api/index.html>

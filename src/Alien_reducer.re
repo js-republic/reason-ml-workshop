@@ -1,6 +1,4 @@
-open Types;
-
-let moveAlien = (elapsedTime: float, a: alien) : alien => {
+let moveAlien = (elapsedTime: float, a: Types.alien) : Types.alien => {
   let x = a.x +. elapsedTime *. 0.3 *. float_of_int(a.direction);
   switch (x > 0., x +. a.width < Constants.width) {
   | (true, true) => {...a, x}
@@ -14,14 +12,16 @@ let moveAlien = (elapsedTime: float, a: alien) : alien => {
   };
 };
 
-let moveAliens = (aliens: list(alien), elapsedTime: float) : list(alien) =>
+let moveAliens =
+    (aliens: list(Types.alien), elapsedTime: float)
+    : list(Types.alien) =>
   aliens
   |> List.map(moveAlien(elapsedTime))
-  |> List.filter((a: alien) => a.y < Constants.height);
+  |> List.filter((a: Types.alien) => a.y < Constants.height);
 
 let reducer =
-    (elapsedTime: float, state: alienState, action: Actions.all)
-    : alienState => {
+    (elapsedTime: float, state: Types.alienState, action: Actions.all)
+    : Types.alienState => {
   let now = Js.Date.now();
   switch action {
   | AlienImageLoaded(img) => {
