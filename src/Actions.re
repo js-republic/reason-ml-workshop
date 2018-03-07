@@ -7,4 +7,4 @@ type all =
   | ShotImageLoaded(Types.image)
   | GoLeft
   | GoRight
-  | Fire(float, float);
+  | Fire(Types.coordinate);

@@ -18,20 +18,11 @@ let reducer =
         potentialSprite: Some(img)
       }
     }
-  | Fire(x, y) => {
+  | Fire(coord) => {
       ...state,
-      shots: state.shots @ [{...state.itemModel, y: y +. 5., x}]
-    }
-  | Tick => {
-      ...state,
-      shots:
-        state.shots
-        |> List.map((shot: Types.shot) =>
-             ({...shot, y: shot.y -. 5.}: Types.shot)
-           )
+      shots: state.shots @ [{...state.itemModel, y: coord.y +. 5., x: coord.x}]
     }
   | ResetInGame => {...state, shots: []}
   | Tick => {...state, shots: tickShots(state.shots, elapsedTime)}
-  | Fire(x, y) => {...state, shots: state.shots @ [{...state.itemModel, x, y}]}
   | _ => state
   };

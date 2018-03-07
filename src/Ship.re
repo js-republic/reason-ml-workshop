@@ -1,7 +1,7 @@
 let onSpace = (state: Types.shipState) => {
   let y = Constants.height -. state.height;
   let x = state.x +. state.width /. 2.;
-  Store.dispatch(Actions.Fire(x, y));
+  Store.dispatch(Actions.Fire({x, y}));
 };
 
 let onKeyUp = (event: Dom.keyboardEvent) : unit =>

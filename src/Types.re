@@ -2,6 +2,11 @@ type canvasContext = Webapi.Canvas.Canvas2d.t;
 
 type image;
 
+type coordinate = {
+  x: float,
+  y: float
+};
+
 type screenState = {
   height: float,
   width: float,
