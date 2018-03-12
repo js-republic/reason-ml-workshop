@@ -13,8 +13,23 @@ let goTo = (stage: stageType) => {
   store.stage = Some(stage);
 };
 
+let onSpace = () => {
+  let shipState = store.state.ship;
+  let y = Constants.height -. shipState.height;
+  let x =
+    shipState.x
+    +. shipState.width
+    /. 2.
+    -. store.state.shot.itemModel.width
+    /. 2.;
+  dispatch(Actions.Fire({x, y}));
+};
+
 let onKeyUpWrapper = (event: Dom.keyboardEvent) =>
-  Ship.onKeyUp(Webapi.Dom.KeyboardEvent.code(event));
+  switch (Webapi.Dom.KeyboardEvent.code(event)) {
+  | "Space" => onSpace()
+  | keyCode => Ship.onKeyUp(keyCode)
+  };
 
 let inGame: stageType = {
   willMount: () => {

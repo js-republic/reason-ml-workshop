@@ -1,5 +1,5 @@
 /**
- * This function can used to return the greater float between two. It's a direct
+ * This function can be used to return the greater float between two. It's a direct
  * binding to the `Math.max` function existing in JavaScript.
  *
  * Example : let greater = max(1, 5); /* 5 */
@@ -13,7 +13,7 @@
 external max : (float, float) => float = "max";
 
 /**
- * This function can used to return the smallest float between two. It's a direct
+ * This function can be used to return the smallest float between two. It's a direct
  * binding to the `Math.max` function existing in JavaScript.
  *
  * Example : let smallest = max(1, 5); /* 1 */

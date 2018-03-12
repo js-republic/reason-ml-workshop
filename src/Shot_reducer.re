@@ -1,20 +1,23 @@
-let tickShots =
-    (shots: list(Types.shot), elapsedTime: float)
+let shotSpeed = 0.5;
+
+let moveShot = (elapsedTime: float, shot: Types.shot) : Types.shot => {
+  ...shot,
+  y: shot.y -. elapsedTime *. shotSpeed
+};
+
+let stillInTheScreen = (shot: Types.shot) : bool => shot.y > 0.;
+
+let moveShots =
+    (elapsedTime: float, shots: list(Types.shot))
     : list(Types.shot) =>
-  shots
-  |> List.map((i: Types.shot) =>
-       ({...i, y: i.y -. elapsedTime *. 0.5}: Types.shot)
-     )
-  |> List.filter((i: Types.shot) => i.y > 0.);
+  shots |> List.map(moveShot(elapsedTime)) |> List.filter(stillInTheScreen);
 
 let reducer =
     (elapsedTime: float, state: Types.shotState, action: Actions.all)
-    : Types.shotState =>
+    : Types.shotState => {
+  let moveShotsTimed = moveShots(elapsedTime);
   switch action {
-  | Fire(coord) => {
-      ...state,
-      shots: state.shots @ [{...state.itemModel, y: coord.y +. 5., x: coord.x}]
-    }
-  | Tick => {...state, shots: tickShots(state.shots, elapsedTime)}
+  | Tick => {...state, shots: state.shots |> moveShotsTimed}
   | _ => state
   };
+};

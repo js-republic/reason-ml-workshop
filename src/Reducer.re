@@ -38,6 +38,15 @@ let pre = (_, state: Types.rootState, action: Actions.all) : Types.rootState =>
         }
       }
     }
+  | Fire(coord) => {
+      ...state,
+      shot: {
+        ...state.shot,
+        shots:
+          state.shot.shots
+          @ [{...state.shot.itemModel, y: coord.y, x: coord.x}]
+      }
+    }
   | ResetInGame => {
       ...state,
       shot: {

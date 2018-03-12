@@ -41,6 +41,8 @@ npm run init
 npm start
 ```
 
+> Ne vous déconseillons l'utilisation de `yarn`, car des participants précédents ont rencontré des problèmes avec et nous n'avons pas de `yarn.lock` vous garantissant la bonne version des dépendances.
+
 Il ne vous restera qu'a ouvrir le panneau de contrôle (aka. le fichier `index.html`) dans votre navigateur.
 
 Avant de vous lancer dans cette mission, prennez quelques minutes pour vous familiariser avec l'architecture du vaisseau et du langage ReasonML qui le compose.
@@ -196,12 +198,16 @@ Gardez ce fichier ouvert, il vous sera d'un grand secours tout au long de votre 
 
 ### Informations utiles sur ReasonML
 
+### Les logs
+
 Bien utile quand l'on veut déboguer, si vous voulez faire l'équivalent du `console.log` en ReasonMl vous pourrez appeler
 
 ```javascript
 Js.log("Mon message que je veux afficher");
 Js.log("Ma variable vaut " ++ maVariable); // Sous réserve que maVariable est bien un string
 ```
+
+### Les Modules
 
 En ReasoML, le concept de `Module` est omniprésent. Un `Module` représente un groupement de fonction, variable, type, etc. Bref, à peu prêt tout ce qu'on peut manipuler en ReasonML. Cela peut être vu comme un Namespace pour ceux qui en on déjà entendu parler d'en d'autres langages.
 
@@ -214,7 +220,7 @@ Pour utiliser quelque chose situé dans un autre fichier que celui dans lequel o
 Pour en savoir plus sur les modules, rendez-vous sur cette page :
 <https://reasonml.github.io/docs/fr/module.html>
 
-D'autres liens utiles :
+### Infos utiles :
 
 * Rappel synthétique de la syntaxe ReasonML : <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
 * API ReasonML : <https://reasonml.github.io/api/index.html>
@@ -225,9 +231,11 @@ D'autres liens utiles :
 
 ## GPS intergalactic brouillé - (Etape 1)
 
-Mots clés ReasonML traités dans ce chapitre : _#option_, _#patternMatching_, _#labeledArguments_
+```
+_#option_, _#patternMatching_, _#labeledArguments_
+```
 
-Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant le vaisseau n'apparait même sur la carte :
+Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant le vaisseau n'apparait même pas sur la carte :
 
 ![Le vide de l'espace](./docs/step1.png)
 
@@ -271,7 +279,11 @@ let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
 
 ## Remettez en marche les propulseurs auxiliaires - (Etape 2)
 
-Notre vaiseau est cloué sur place et nous ne pouvons rien faire pour défendre la Fédération des planètes unies. Nous avons besoin de réparer les propulseurs auxiliaires.
+```
+_#patternMatching_, _#immutabilité_, _#record_, _#spread_
+```
+
+Notre vaisseau est cloué sur place et nous ne pouvons rien faire pour défendre la Fédération des planètes unies. Nous avons besoin de réparer les propulseurs auxiliaires.
 
 ![Notre vaisseau est bloqué](./docs/step2.png)
 
@@ -286,15 +298,15 @@ let onKeyUp = (keyCode: string) : unit =>
   };
 ```
 
-Prêter bien attention, aux résultats des tests unitaires visibles dans la console. Ils vous indique le comportant attendu de `onKeyUp` de façon détailler.
+Prêter bien attention aux résultats des tests unitaires visibles dans la console. Ils vous indique le comportement attendu de `onKeyUp` de façon détaillé.
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
 // src/Ship.re
 <pre>
-let onKeyUp = (event: Dom.keyboardEvent) : unit =>
-  switch (Webapi.Dom.KeyboardEvent.code(event)) {
+let onKeyUp = (keyCode: string) : unit =>
+  switch keyCode {
   | "ArrowLeft" => Store.dispatch(Actions.GoLeft)
   | "ArrowRight" => Store.dispatch(Actions.GoRight)
   | _ => ()
@@ -303,10 +315,14 @@ let onKeyUp = (event: Dom.keyboardEvent) : unit =>
 </p>
 </details>
 
+---
+
 Le reducer du vaisseau `src/Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `x` en fonction de la direction que vous avez dispatché...
-L'ingénieur Scott, nous rappel que ce reducer est un modèle un peu particulié car il prend aussi en charge le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en millisecond. Cela permettra de d'avoir une vitesse constante.
+L'ingénieur Scott, nous rappel que ce reducer est un modèle un peu particulié car il prend aussi en paramètre le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en milliseconde. Cela permettra d'avoir une vitesse constante.
 
 ```reason
+let shipSpeed = 0.5;
+
 let reducer = (elapsedTime: float, state: Types.shipState, action: Ations.all): Types.shipState =>
   switch action {
   | _ => state
@@ -316,46 +332,42 @@ let reducer = (elapsedTime: float, state: Types.shipState, action: Ations.all): 
 > _Un Rappel très important_ : Rappelez-vous que dans notre galaxie, les coordonées (0, 0) sont celles du coin haut gauche comme illustré ci-dessous :
 
 ```
-0------------------>
+(0,0)---------------->
 |
 |
 |
 |
 |      (ship)
-\/
+v
 ```
 
-> Des fonctions `max` et `min` sont disponibles ainsi qu'un module `Constants` contenant la taille de la carte. Et rappelez-vous, vous devez toujours renvoyer une nouvelle instance du state jamais le modifiez directement.
+> Des fonctions `max` et `min` sont disponibles ainsi qu'un module `Constants` contenant la taille de la carte. Et rappelez-vous, vous devez toujours renvoyer une nouvelle instance du state jamais le modifier directement. Vous pouvez utiliser pour cela le Spread operator (<https://github.com/arecvlohe/reasonml-cheat-sheet#spread>).
 
-Liens utiles :
-
-* <https://reasonml.github.io/docs/en/variant.html>
-* <https://reasonml.github.io/docs/en/integer-and-float.html>
-* <http://2ality.com/2018/01/lists-arrays-reasonml.html#more-ways-of-creating-lists>
+Prêter bien attention aux résultats des tests unitaires visibles dans la console. Ils vous indique le comportement attendu de `reducer` de façon détaillé.
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
-// src/Ship.re
-<pre>
-let onKeyUp = (event: Dom.keyboardEvent) : unit =>
-  switch (Webapi.Dom.KeyboardEvent.code(event)) {
-  | "ArrowLeft" => Store.dispatch(Actions.GoLeft)
-  | "ArrowRight" => Store.dispatch(Actions.GoRight)
-  | _ => ()
-  };
-</pre>
 // src/Ship_reducer.re
 <pre>
+let shipSpeed = 0.5;
+
 let reducer =
-    (elapsedTime: float, state: Types.shipState, action: Actions.all)
-    : Types.shipState =>
-  switch action {
-  | ShipImageLoaded(img) => {...state, potentialSprite: Some(img)}
-  | GoLeft => {...state, x: max(0., state.x -. elapsedTime *. 0.5)}
-  | GoRight => {...state, x: min(height, state.x +. elapsedTime *. 0.5)}
-  | _ => state
-  };
+(elapsedTime: float, state: Types.shipState, action: Actions.all)
+: Types.shipState =>
+switch action {
+| GoLeft => {...state, x: max(0., state.x -. elapsedTime _. shipSpeed)}
+| GoRight => {
+...state,
+x:
+min(
+Constants.width -. state.width,
+state.x +. elapsedTime _. shipSpeed
+)
+}
+| \_ => state
+};
+
 </pre>
 </p>
 </details>
@@ -366,7 +378,7 @@ let reducer =
 
 Se déplacer c'est déjà très bien, mais nos défenses sont toujours inertes et les aliens se rapprochent, le temps devient notre ennemi !
 
-Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origines du vaiseau.
+Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origines celles du vaiseau.
 
 > L'ingénieur Scott rappel que l'on peut accéder exeptionellement aux données du store du vaisseau avec l'expression `Store.store.state`. Cela sera bien utile pour récupérer notre position courante.
 
@@ -391,6 +403,8 @@ switch (Webapi.Dom.KeyboardEvent.code(event)) {
 </pre>
 </p>
 </details>
+
+---
 
 Nous pouvons désormais bien envoyé les instructions de tir, mais le canon reste inactif... Regarder dans le reducer `src/Shot_reducer.re`, l'action `Fire` n'est probablement pas gérée. De même, chaque projectile du canon à Ion doit-être guidé grâce à l'action `Tick` dispatché par l'intelligence artificielle à chaque boucle. N'oubliez pas d'auto-détruire les projectiles quand ils sortent de l'écran de contrôle - Faudrait pas dégomer une étoile noire par erreur ...
 
@@ -427,6 +441,8 @@ potentialSprite: Some(img)
 </pre>
 </p>
 </details>
+
+---
 
 Doc du canon à Ion Mark III :
 

@@ -160,6 +160,55 @@ describe("Ship_reducer.reducer (Step 2-B)", () => {
   });
 });
 
+describe("Shot_reducer.moveShot (Step 3-A)", () => {
+  test("should move a shot to the top", () => {
+    /* given a shot and the expected shot */
+    let shot = mkShot(30., 100., 10., 10.);
+    let expectedShot = mkShot(30., 95., 10., 10.);
+    /* when call moveShot with the given Shot and 10ms */
+    let newShot = Shot_reducer.moveShot(10., shot);
+    /* then the shot has moved has expected */
+    expect(expectedShot) |> toEqual(newShot);
+  });
+  test(
+    "should move a shot more to the top when the elapsed time is bigger", () => {
+    /* given a shot and the expected shot */
+    let shot = mkShot(30., 100., 10., 10.);
+    let expectedShot = mkShot(30., 50., 10., 10.);
+    /* when call moveShot with the given Shot and 100ms */
+    let newShot = Shot_reducer.moveShot(100., shot);
+    /* then the shot has moved more has expected */
+    expect(expectedShot) |> toEqual(newShot);
+  });
+});
+
+describe("Shot_reducer.moveShots (Step 3-B)", () => {
+  test("should move shots to the top", () => {
+    /* given shots and expected shots */
+    let shots = [mkShot(30., 100., 10., 10.), mkShot(30., 50., 10., 10.)];
+    let expectedShots = [
+      mkShot(30., 95., 10., 10.),
+      mkShot(30., 45., 10., 10.)
+    ];
+    /* when call moveShots with the given shots and 10ms */
+    let newShots = Shot_reducer.moveShots(10., shots);
+    /* then the shots has moved has expected */
+    expect(expectedShots) |> toEqual(newShots);
+  });
+  test("should move more shots to the top", () => {
+    /* given shots and expected shots */
+    let shots = [mkShot(30., 100., 10., 10.), mkShot(30., 50., 10., 10.)];
+    let expectedShots = [
+      mkShot(30., 90., 10., 10.),
+      mkShot(30., 40., 10., 10.)
+    ];
+    /* when call moveShots with the given shots and 10ms */
+    let newShots = Shot_reducer.moveShots(20., shots);
+    /* then the shots has moved has expected */
+    expect(expectedShots) |> toEqual(newShots);
+  });
+});
+
 describe("Colision.findNotCollided", () => {
   test("should return empty shot list and alien list when they collide", () => {
     /* given */
