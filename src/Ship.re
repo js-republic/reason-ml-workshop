@@ -1,4 +1,4 @@
-let onKeyUp = (keyCode: string) : unit =>
+let onKeyDown = (keyCode: string) : unit =>
   switch keyCode {
   | "ArrowLeft" => Store.dispatch(Actions.GoLeft)
   | "ArrowRight" => Store.dispatch(Actions.GoRight)

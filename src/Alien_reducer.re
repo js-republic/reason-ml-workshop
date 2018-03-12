@@ -1,45 +1,45 @@
+let alienSpeed = 0.3;
+
+let nextX = (elapsedTime: float, a: Types.alien) =>
+  a.x +. elapsedTime *. alienSpeed *. float_of_int(a.direction);
+
+let isOnEdge = (newX: float, alien: Types.alien) : (bool, bool) => (
+  newX < 0.,
+  newX +. alien.width > Constants.width
+);
+
+let alienStep = 70.;
+
+let moveOnLeftEdge = (a: Types.alien) : Types.alien => {
+  ...a,
+  x: 0.,
+  y: a.y +. alienStep,
+  direction: 1
+};
+
+let moveOnRightEdge = (a: Types.alien) : Types.alien => {
+  ...a,
+  x: Constants.width -. a.width,
+  y: a.y +. alienStep,
+  direction: (-1)
+};
+
 let moveAlien = (elapsedTime: float, a: Types.alien) : Types.alien => {
-  let x = a.x +. elapsedTime *. 0.3 *. float_of_int(a.direction);
-  switch (x > 0., x +. a.width < Constants.width) {
-  | (true, true) => {...a, x}
-  | (false, _) => {...a, x: 0., y: a.y +. 70., direction: a.direction * (-1)}
-  | (_, false) => {
-      ...a,
-      x: Constants.width -. a.width,
-      y: a.y +. 70.,
-      direction: a.direction * (-1)
-    }
+  let x = nextX(elapsedTime, a);
+  switch (isOnEdge(x, a)) {
+  | (false, false) => {...a, x}
+  | (true, _) => moveOnLeftEdge(a)
+  | (_, true) => moveOnRightEdge(a)
   };
 };
 
-let moveAliens =
-    (aliens: list(Types.alien), elapsedTime: float)
-    : list(Types.alien) =>
-  aliens
-  |> List.map(moveAlien(elapsedTime))
-  |> List.filter((a: Types.alien) => a.y < Constants.height);
+let isStillInMap = (alien: Types.alien) => alien.y < Constants.height;
 
-let reducer =
-    (elapsedTime: float, state: Types.alienState, action: Actions.all)
-    : Types.alienState => {
-  let now = Js.Date.now();
+let moveAliens = (aliens: list(Types.alien), elapsedTime: float) : list(Types.alien) =>
+  aliens |> List.map(moveAlien(elapsedTime)) |> List.filter(isStillInMap);
+
+let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all) : Types.alienState =>
   switch action {
-  | AlienImageLoaded(img) => {
-      ...state,
-      itemModel: {
-        ...state.itemModel,
-        potentialSprite: Some(img)
-      }
-    }
-  | ResetInGame => {...state, lastSpawn: now}
-  | Tick =>
-    let hasToRespawn = now -. state.lastSpawn > 500.;
-    let aliens =
-      moveAliens(
-        hasToRespawn ? state.aliens @ [state.itemModel] : state.aliens,
-        elapsedTime
-      );
-    {...state, lastSpawn: hasToRespawn ? now : state.lastSpawn, aliens};
+  | Tick => {...state, aliens: moveAliens(state.aliens, elapsedTime)}
   | _ => state
   };
-};

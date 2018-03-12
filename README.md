@@ -223,6 +223,7 @@ Pour en savoir plus sur les modules, rendez-vous sur cette page :
 ### Infos utiles :
 
 * Rappel synthétique de la syntaxe ReasonML : <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
+* Autre rappel : <https://github.com/arecvlohe/reasonml-cheat-sheet>
 * API ReasonML : <https://reasonml.github.io/api/index.html>
 
 > Pour les plus curieux : Sachez que les fichiers JavaScript générer depuis les sources ReasonML sont déposés dans le dossier `lib/js/src` depuis la racine du projet. Vous pourrez voir un peu à quoi ça ressemble une fois généré ;)
@@ -289,23 +290,23 @@ Notre vaisseau est cloué sur place et nous ne pouvons rien faire pour défendre
 
 > Spock nous rappel que notre vaisseau repose sur une architecture Flux et qu'il dispose d'actions listées dans le fichier `src/Actions.re`. Ces actions peuvent être dispatchées grâce à la fonction `dispatch` du module `Store` trouvable dans le fichier `src/Store.re`.
 
-Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyUp` du fichier `src/Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` en fonction des touches du clavier.
+Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyDown` du fichier `src/Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` en fonction des touches du clavier.
 
 ```reason
-let onKeyUp = (keyCode: string) : unit =>
+let onKeyDown = (keyCode: string) : unit =>
   switch keyCode {
   | _ => ()
   };
 ```
 
-Prêter bien attention aux résultats des tests unitaires visibles dans la console. Ils vous indique le comportement attendu de `onKeyUp` de façon détaillé.
+Prêter bien attention aux résultats des tests unitaires visibles dans la console. Ils vous indique le comportement attendu de `onKeyDown` de façon détaillé.
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
 // src/Ship.re
 <pre>
-let onKeyUp = (keyCode: string) : unit =>
+let onKeyDown = (keyCode: string) : unit =>
   switch keyCode {
   | "ArrowLeft" => Store.dispatch(Actions.GoLeft)
   | "ArrowRight" => Store.dispatch(Actions.GoRight)
@@ -348,26 +349,18 @@ Prêter bien attention aux résultats des tests unitaires visibles dans la conso
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
-// src/Ship_reducer.re
 <pre>
-let shipSpeed = 0.5;
-
-let reducer =
-(elapsedTime: float, state: Types.shipState, action: Actions.all)
-: Types.shipState =>
-switch action {
-| GoLeft => {...state, x: max(0., state.x -. elapsedTime _. shipSpeed)}
-| GoRight => {
-...state,
-x:
-min(
-Constants.width -. state.width,
-state.x +. elapsedTime _. shipSpeed
-)
-}
-| \_ => state
-};
-
+let shipSpeed = 0.7;
+/**/
+let reducer = (elapsedTime: float, state: Types.shipState, action: Actions.all) : Types.shipState =>
+  switch action {
+  | GoLeft => {...state, x: max(0., state.x -. elapsedTime *. shipSpeed)}
+  | GoRight => {
+      ...state,
+      x: min(Constants.width -. state.width, state.x +. elapsedTime *. shipSpeed)
+    }
+  | _ => state
+  };
 </pre>
 </p>
 </details>
@@ -376,37 +369,9 @@ state.x +. elapsedTime _. shipSpeed
 
 ## Activer l'armement de l'enterprise
 
-Se déplacer c'est déjà très bien, mais nos défenses sont toujours inertes et les aliens se rapprochent, le temps devient notre ennemi !
+Vous avez essayé d'appuyer sur la barre espace ? Vous verrez que le canon tire bien un projectile mais que celui reste complètement immobile...
 
-Le canon à Ion principale a visiblement été endomagé durant la dernière bataille. Il ne reçoit même pas les instructions de tir ! Aller dans le fichier `src/Ship.re` et dispatcher l'action `Fire` à l'appui d'une touche en lui donnant comme coordonnés d'origines celles du vaiseau.
-
-> L'ingénieur Scott rappel que l'on peut accéder exeptionellement aux données du store du vaisseau avec l'expression `Store.store.state`. Cela sera bien utile pour récupérer notre position courante.
-
-<details>
-<summary><i>Découvrer la solution ici</i></summary>
-<p>
-<pre>
-let onSpace = (state: Types.shipState) => {
-  let y = Constants.height -. state.height;
-  let x = state.x +. state.width /. 2.;
-  Store.dispatch(Actions.Fire(x, y));
-};
-
-let onKeyUp = (event: Dom.keyboardEvent) : unit =>
-switch (Webapi.Dom.KeyboardEvent.code(event)) {
-| "ArrowLeft" => Store.dispatch(Actions.GoLeft)
-| "ArrowRight" => Store.dispatch(Actions.GoRight)
-| "Space" => onSpace(Store.store.state.ship)
-| \_ => ()
-};
-
-</pre>
-</p>
-</details>
-
----
-
-Nous pouvons désormais bien envoyé les instructions de tir, mais le canon reste inactif... Regarder dans le reducer `src/Shot_reducer.re`, l'action `Fire` n'est probablement pas gérée. De même, chaque projectile du canon à Ion doit-être guidé grâce à l'action `Tick` dispatché par l'intelligence artificielle à chaque boucle. N'oubliez pas d'auto-détruire les projectiles quand ils sortent de l'écran de contrôle - Faudrait pas dégomer une étoile noire par erreur ...
+Le système de téléguidage des projectiles semble complètement H.S !
 
 <https://reasonml.github.io/api/List.html>
 
@@ -414,29 +379,6 @@ Nous pouvons désormais bien envoyé les instructions de tir, mais le canon rest
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
 <pre>
-open Types;
-
-let tickShots = (shots: list(shot), elapsedTime: float) : list(shot) =>
-shots
-|> List.map((i: shot) => ({...i, y: i.y -. elapsedTime \*. 0.5}: shot))
-|> List.filter((i: shot) => i.y > 0.);
-
-let reducer =
-(elapsedTime: float, state: shotState, action: Actions.all)
-: shotState =>
-switch action {
-| ShotImageLoaded(img) => {
-...state,
-itemModel: {
-...state.itemModel,
-potentialSprite: Some(img)
-}
-}
-| ResetInGame => {...state, shots: []}
-| Tick => {...state, shots: tickShots(state.shots, elapsedTime)}
-| Fire(x, y) => {...state, shots: state.shots @ [{...state.itemModel, x, y}]}
-| \_ => state
-};
 
 </pre>
 </p>
@@ -462,13 +404,13 @@ Pour ce faire, nous allons modifier le radar à onde courte d'alien implémenter
 Spock a déterminé que les aliens allaient suivre un intinéraire en serpentin :
 
 ```
---O--O--O-->
+--O--O--O---+
             |
-<--O--O--O--
++--O--O--O--+
 |
---O--O--O-->
++-O--O--O---+
             |
-           \ /
+            v
 ```
 
 La aliens arriveront toutes les 600 ms à une vitesse de 0.3 x le temps entre chaque boucle. Les aliens ont un sens de `direction` exprimé sous la forme d'un entier égal à 1 quand ils vont de gauche à droite et -1 quand ils vont droite à gauche (cf `alien` ligne 28 dans le fichier `src/Types.re`). Chaque fois que les aliens arrivent aux bords de la carte, ils font demi-tour et descendent de 40.
@@ -477,58 +419,51 @@ La aliens arriveront toutes les 600 ms à une vitesse de 0.3 x le temps entre ch
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
 <pre>
-open Types;
-
-let moveAlien = (elapsedTime: float, a: alien) : alien => {
-let x = a.x +. elapsedTime _. 0.3 _. float*of_int(a.direction);
-switch (x > 0., x +. a.width < Constants.width) {
-| (true, true) => {...a, x}
-| (false, true) => {
-...a,
-x: 0.,
-y: a.y +. 70.,
-direction: a.direction * (-1)
-}
-| (true, false) => {
-...a,
-x: Constants.width -. a.width,
-y: a.y +. 70.,
-direction: a.direction _ (-1)
-}
-| _ => failwith("Impossible case ...")
-};
-};
-
-let moveAliens = (aliens: list(alien), elapsedTime: float) : list(alien) =>
-aliens
-|> List.map(moveAlien(elapsedTime))
-|> List.filter((a: alien) => a.y < Constants.height);
-
-let reducer =
-(elapsedTime: float, state: alienState, action: Actions.all)
-: alienState => {
-let now = Js.Date.now();
-switch action {
-| AlienImageLoaded(img) => {
-...state,
-itemModel: {
-...state.itemModel,
-potentialSprite: Some(img)
-}
-}
-| ResetInGame => {...state, lastSpawn: now}
-| Tick =>
-let hasToRespawn = now -. state.lastSpawn > 800.;
-let aliens =
-moveAliens(
-hasToRespawn ? state.aliens @ [state.itemModel] : state.aliens,
-elapsedTime
+let alienSpeed = 0.3;
+/* */
+let nextX = (elapsedTime: float, a: Types.alien) =>
+  a.x +. elapsedTime *. alienSpeed *. float_of_int(a.direction);
+/* */
+let isOnEdge = (newX: float, alien: Types.alien) : (bool, bool) => (
+  newX < 0.,
+  newX +. alien.width > Constants.width
 );
-{...state, lastSpawn: hasToRespawn ? now : state.lastSpawn, aliens};
-| \_ => state
+/* */
+let alienStep = 70.;
+/* */
+let moveOnLeftEdge = (a: Types.alien) : Types.alien => {
+  ...a,
+  x: 0.,
+  y: a.y +. alienStep,
+  direction: 1
 };
+/* */
+let moveOnRightEdge = (a: Types.alien) : Types.alien => {
+  ...a,
+  x: Constants.width -. a.width,
+  y: a.y +. alienStep,
+  direction: (-1)
 };
-
+/* */
+let moveAlien = (elapsedTime: float, a: Types.alien) : Types.alien => {
+  let x = nextX(elapsedTime, a);
+  switch (isOnEdge(x, a)) {
+  | (false, false) => {...a, x}
+  | (true, _) => moveOnLeftEdge(a)
+  | (_, true) => moveOnRightEdge(a)
+  };
+};
+/* */
+let isStillInMap = (alien: Types.alien) => alien.y < Constants.height;
+/* */
+let moveAliens = (aliens: list(Types.alien), elapsedTime: float) : list(Types.alien) =>
+  aliens |> List.map(moveAlien(elapsedTime)) |> List.filter(isStillInMap);
+/* */
+let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all) : Types.alienState =>
+  switch action {
+  | Tick => {...state, aliens: moveAliens(state.aliens, elapsedTime)}
+  | _ => state
+  };
 </pre>
 </p>
 </details>
@@ -541,49 +476,36 @@ L'entreprise est presque prêt ! Seul le système de detection des colisions res
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
 <pre>
-open Types;
-
-open List;
-
-let removeKilledBy = (shot: shot, aliens: list(alien)) : list(alien) =>
-aliens
-|> filter(alien =>
-! (
-shot.x < alien.x
-+. alien.width
-&& shot.x
-+. shot.width > alien.x
-&& shot.y < alien.y
-+. alien.height
-&& shot.height
-+. shot.y > alien.y
-)
-);
-
+let removeKilledBy = (shot: Types.shot, aliens: list(Types.alien)) : list(Types.alien) =>
+  List.filter(
+    (alien: Types.alien) =>
+      ! (
+        shot.x < alien.x
+        +. alien.width
+        && shot.x
+        +. shot.width > alien.x
+        && shot.y < alien.y
+        +. alien.height
+        && shot.height
+        +. shot.y > alien.y
+      ),
+    aliens
+  );
 let findNotCollided =
-(aliens: list(alien), shots: list(shot))
-: (list(alien), list(shot)) => {
-let initValue: (list(alien), list(shot)) = (aliens, []);
-fold_left(
-((aliensStillAlive, missedShots), shot: shot) => {
-let newAliensStillAlive = aliensStillAlive |> removeKilledBy(shot);
-let isShotHit = length(newAliensStillAlive) != length(aliensStillAlive);
-let newMissedShot = isShotHit ? missedShots : missedShots @ [shot];
-Js.log(
-"colision "
-++ string_of_bool(isShotHit)
-++ " :: "
-++ string_of_int(length(newMissedShot))
-++ " :: "
-++ string_of_int(length(newAliensStillAlive))
-);
-(newAliensStillAlive, newMissedShot);
-},
-initValue,
-shots
-);
+    (aliens: list(Types.alien), shots: list(Types.shot))
+    : (list(Types.alien), list(Types.shot)) => {
+  let initValue: (list(Types.alien), list(Types.shot)) = (aliens, []);
+  List.fold_left(
+    ((aliensStillAlive, missedShots), shot: Types.shot) => {
+      let newAliensStillAlive = aliensStillAlive |> removeKilledBy(shot);
+      let isShotHit = List.length(newAliensStillAlive) != List.length(aliensStillAlive);
+      let newMissedShot = isShotHit ? missedShots : missedShots @ [shot];
+      (newAliensStillAlive, newMissedShot);
+    },
+    initValue,
+    shots
+  );
 };
-
 </pre>
 </p>
 </details>

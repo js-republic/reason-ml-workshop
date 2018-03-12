@@ -26,20 +26,14 @@ external max : (float, float) => float = "max";
 [@bs.val]
 external min : (float, float) => float = "min";
 
-let shipSpeed = 0.5;
+let shipSpeed = 0.7;
 
-let reducer =
-    (elapsedTime: float, state: Types.shipState, action: Actions.all)
-    : Types.shipState =>
+let reducer = (elapsedTime: float, state: Types.shipState, action: Actions.all) : Types.shipState =>
   switch action {
   | GoLeft => {...state, x: max(0., state.x -. elapsedTime *. shipSpeed)}
   | GoRight => {
       ...state,
-      x:
-        min(
-          Constants.width -. state.width,
-          state.x +. elapsedTime *. shipSpeed
-        )
+      x: min(Constants.width -. state.width, state.x +. elapsedTime *. shipSpeed)
     }
   | _ => state
   };
