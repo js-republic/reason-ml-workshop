@@ -11,18 +11,10 @@ let reducer =
     (elapsedTime: float, state: Types.shotState, action: Actions.all)
     : Types.shotState =>
   switch action {
-  | ShotImageLoaded(img) => {
-      ...state,
-      itemModel: {
-        ...state.itemModel,
-        potentialSprite: Some(img)
-      }
-    }
   | Fire(coord) => {
       ...state,
       shots: state.shots @ [{...state.itemModel, y: coord.y +. 5., x: coord.x}]
     }
-  | ResetInGame => {...state, shots: []}
   | Tick => {...state, shots: tickShots(state.shots, elapsedTime)}
   | _ => state
   };

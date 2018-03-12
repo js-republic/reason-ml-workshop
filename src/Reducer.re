@@ -21,6 +21,30 @@ let pre = (_, state: Types.rootState, action: Actions.all) : Types.rootState =>
         potentialBg: Some(img)
       }
     }
+  | ShipImageLoaded(img) => {
+      ...state,
+      ship: {
+        ...state.ship,
+        potentialShipSprite: Some(img)
+      }
+    }
+  | ShotImageLoaded(img) => {
+      ...state,
+      shot: {
+        ...state.shot,
+        itemModel: {
+          ...state.shot.itemModel,
+          potentialSprite: Some(img)
+        }
+      }
+    }
+  | ResetInGame => {
+      ...state,
+      shot: {
+        ...state.shot,
+        shots: []
+      }
+    }
   | _ => state
   };
 

@@ -14,7 +14,7 @@ type screenState = {
 };
 
 type shipState = {
-  potentialSprite: option(image),
+  potentialShipSprite: option(image),
   x: float,
   y: float,
   height: float,

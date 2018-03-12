@@ -13,9 +13,12 @@ let goTo = (stage: stageType) => {
   store.stage = Some(stage);
 };
 
+let onKeyUpWrapper = (event: Dom.keyboardEvent) =>
+  Ship.onKeyUp(Webapi.Dom.KeyboardEvent.code(event));
+
 let inGame: stageType = {
   willMount: () => {
-    Document.addKeyUpEventListener(Ship.onKeyUp, document);
+    Document.addKeyUpEventListener(onKeyUpWrapper, document);
     dispatch(Actions.ResetInGame);
   },
   render: (ctx, state) => {
@@ -24,7 +27,8 @@ let inGame: stageType = {
     state.alien.aliens |> List.iter(Alien.render(ctx));
     Ship.render(ctx, state.ship);
   },
-  willDestroy: () => Document.removeKeyUpEventListener(Ship.onKeyUp, document)
+  willDestroy: () =>
+    Document.removeKeyUpEventListener(onKeyUpWrapper, document)
 };
 
 let start: stageType = {

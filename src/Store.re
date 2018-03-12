@@ -10,20 +10,20 @@ let store: storeType(Types.rootState) = {
   preReducer: Reducer.pre,
   postReducer: Reducer.post,
   actions: [],
-  /* "rootState" état global du système */
+  /* "rootState" état global du système de type Types.rootState */
   state:
-    /* "screen" définie l'état de l'écran (pas utile pour vous) */
+    /* "screen" définie l'état de l'écran (pas utile pour vous) de type Types.screenState */
     {
       screen: {
         height: Constants.height,
         width: Constants.width,
         potentialBg: None
       },
-      /* "ship" définie l'état du vaisseau */
+      /* "ship" de type Types.shipState, définie l'état du vaisseau */
       ship:
-        /* "potentialSprite" est l'image potentiellement chargée du vaisseau */
+        /* "potentialShipSprite" est l'image potentiellement chargée du vaisseau */
         {
-          potentialSprite: None,
+          potentialShipSprite: None,
           /* x et y sont les coordonnées du vaisseau */
           x: Constants.width /. 2. -. 30.,
           y: Constants.height -. 62.,
@@ -31,7 +31,7 @@ let store: storeType(Types.rootState) = {
           height: 62.,
           width: 60.
         },
-      /* "shot" définie l'état de tous les projectiles */
+      /* "shot" de type Types.shotState, définie l'état de tous les projectiles */
       shot: {
         itemModel:
           /* "potentialSprite" est l'image potentiellement chargée du shot */
@@ -47,7 +47,7 @@ let store: storeType(Types.rootState) = {
         /* list des projectiles actuellement déssinés */
         shots: []
       },
-      /* "alien" définie l'état de tous les aliens */
+      /* "alien" de type Types.alienState, définie l'état de tous les aliens */
       alien: {
         itemModel:
           /* "potentialSprite" est l'image potentiellement chargée de l'alien */

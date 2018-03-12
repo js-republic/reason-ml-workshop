@@ -43,7 +43,7 @@ npm start
 
 Il ne vous restera qu'a ouvrir le panneau de contrôle (aka. le fichier `index.html`) dans votre navigateur.
 
-Votre mission commence ici capitaine, nous comptons sur vous et votre fine équipe.
+Avant de vous lancer dans cette mission, prennez quelques minutes pour vous familiariser avec l'architecture du vaisseau et du langage ReasonML qui le compose.
 
 ## Informations générales
 
@@ -72,7 +72,7 @@ __tests__
 └── All_test.re       <- Contient tous les test unitaires
 ```
 
-Le système de l'Enterprise NC-1701 est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En claire cela signifie, que l'ensemble de tous les états (ex: position, taille, image) de chaque élement (Ship, Shot, Alien) sont regroupés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
+Le système de l'Enterprise NC-1701 est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En clair, cela signifie que l'ensemble de tous les états (ex: position, taille, image) de chaque élement (Ship, Shot, Alien) sont regroupés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
 A chaque fois qu'un élément (Ship, Shot, Alien) désire changer une information qui le concerne, il doit dispatcher une `Action` (toutes les actions disponibles du système sont déclarées dans le fichier `Actions.re`) à l'aide de la fonction `dispatch` du fichier `Store.re`.
 
 A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur le reducers principaux, celui de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agrégés et construisent le nouvel état du `rootState` qui servira au rendu.
@@ -121,7 +121,7 @@ Voici un aperçu globale du fonctionnement du système :
 
 Comme dit ci-avant le store contient tous les états de tous les éléments qui seront dessinés dans le jeux. Il convient donc de prêter une attention particulière à cette variable initialisée dans le fichier `Store.re` à ligne 14 :
 
-```javascript
+```reason
 /* "rootState" état global du système */
 state:
 /* "screen" définie l'état de l'écran (pas utile pour vous) */
@@ -133,9 +133,9 @@ state:
   },
   /* "ship" définie l'état du vaisseau */
   ship:
-    /* "potentialSprite" est l'image potentiellement chargée du vaisseau */
+    /* "potentialShipSprite" est l'image potentiellement chargée du vaisseau */
     {
-      potentialSprite: None,
+      potentialShipSprite: None,
       /* x et y sont les coordonnées du vaisseau */
       x: Constants.width /. 2. -. 30.,
       y: Constants.height -. 62.,
@@ -182,38 +182,75 @@ state:
 }
 ```
 
+> L'ensemble des plans du vaisseau ainsi que les types utilisés dans le système sont visibles dans le fichier `src/Types.re`. Un fichier bien utile à garder sous le coude pour ne pas ce perdre dans le système ;)
+
+### TDD de l'espace !
+
+Même en 2265 le TDD fait toujours des merveilles pour guider les hommes (et les femmes) vers la voie de la lumière !
+
+Aussi, on nous signale que tous les vaisseaux de StarFleet sont équipés d'une suite de test pour résoudre tous les problèmes du vaisseau.
+
+Vous retrouverez cette suite de test dans le fichier `__tests__/All_test.re`. Ces tests sont lancés dés que vous faite un `npm start` et leur résultat sont disponible dans la console.
+
+Gardez ce fichier ouvert, il vous sera d'un grand secours tout au long de votre mission.
+
 ### Informations utiles sur ReasonML
 
-Parler de JS.log : TODO
-Parler des module et leur utilisation : TODO
+Bien utile quand l'on veut déboguer, si vous voulez faire l'équivalent du `console.log` en ReasonMl vous pourrez appeler
 
-Liens utiles :
+```javascript
+Js.log("Mon message que je veux afficher");
+Js.log("Ma variable vaut " ++ maVariable); // Sous réserve que maVariable est bien un string
+```
+
+En ReasoML, le concept de `Module` est omniprésent. Un `Module` représente un groupement de fonction, variable, type, etc. Bref, à peu prêt tout ce qu'on peut manipuler en ReasonML. Cela peut être vu comme un Namespace pour ceux qui en on déjà entendu parler d'en d'autres langages.
+
+Chaque fichier ReasonML `*.re` créé implicitement un module du même nom, ainsi le fichier `Image.re` créé un module `Image`.
+Pour utiliser quelque chose situé dans un autre fichier que celui dans lequel on est, on fera appel au module de cet autre fichier. Quelques exemples :
+
+* Depuis `Alien.re` pour invoquer la fonction `draw` du fichier `Image` on écrira `Image.draw(...)`
+* Depuis `Ship.re` pour typer le premier paramètre en `canvasContext` (définie dans le fichier `Types`) on écrira `Types.canvasContext`
+
+Pour en savoir plus sur les modules, rendez-vous sur cette page :
+<https://reasonml.github.io/docs/fr/module.html>
+
+D'autres liens utiles :
 
 * Rappel synthétique de la syntaxe ReasonML : <https://reasonml.github.io/docs/en/syntax-cheatsheet.html>
 * API ReasonML : <https://reasonml.github.io/api/index.html>
 
-## GPS intergalactic brouillé
+> Pour les plus curieux : Sachez que les fichiers JavaScript générer depuis les sources ReasonML sont déposés dans le dossier `lib/js/src` depuis la racine du projet. Vous pourrez voir un peu à quoi ça ressemble une fois généré ;)
 
-Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant le vaisseau n'apparait même sur la carte ...
+> Votre mission commence ici capitaine, nous comptons sur vous et votre fine équipe.
+
+## GPS intergalactic brouillé - (Etape 1)
+
+Mots clés ReasonML traités dans ce chapitre : _#option_, _#patternMatching_, _#labeledArguments_
+
+Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant le vaisseau n'apparait même sur la carte :
+
+![Le vide de l'espace](./docs/step1.png)
 
 Rendez-vous dans le fichier `src/Ship.re`, pour réactiver le rendu de notre vaisseau sur la carte en implémentant la fonction `render`.
 
 ```reason
-let render = (ctx, state: Types.shipState) =>
+let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
   switch state.potentialSprite {
-  | _ => ()
+  | None => ()
   };
 ```
 
-L'ensemble des plans du vaisseau ainsi que les types utilisés dans le système sont visibles dans le fichier `src/Types.re`.
+La fonction `render` prend en argument, en premier le contexte du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième, l'état courant du vaisseau visible dans le fichier `src/Types.re` à la ligne 7.
 
-> L'ingénieur en chef Scott, nous dit via le communicateur que l'image du vaisseau est réprésentée sous la forme d'une `option(HtmlImage.t)` car elle n'est pas chargée dés l'initialisation du vaisseau. Pour en savoir plus, il nous envois le Spatio-lien suivant : <https://reasonml.github.io/docs/en/variant.html#option>
+L'ingénieur en chef Scott, nous dit via le communicateur que l'image du vaisseau est réprésentée sous la forme d'une `option(Image)` (cf. [ligne 17](./src/Types.re#l17) du fichier `Types.re`). Une `option` est un type particulier présent nativement en ReasonML qu'on appelle un `Variant`. Il est en quelque sorte une coquille venant englober une variable dont on ignore si elle est valorisée ou non. Il permet de détecter la valorisation de manière plus élégante et plus puissante qu'un simple `maVar ? DO_SOME_THING() : DO_NOTHING()`.
 
-La fonction `render` prends en argument, en premier le context du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième l'état courant du vaisseau visible dans le fichier `src/Types.re` à la ligne 7.
+Dans notre cas, il sagit d'une `option` d'`image` c'est donc en quelque sorte une coquille contenant potentiellement une image (ou pas).
+`option` peut prendre soit l'état `Some` dans le cas où l'`option` contient une valeur, soit l'état `None` dans le cas où l'`option` ne contient rien.
+Pour en savoir plus sur le type option, il nous envoi le Spatio-lien suivant : <https://reasonml.github.io/docs/en/variant.html#option>
 
-> Spock vous signale qu'une fonction `drawImage` existe dans le fichier `src/HtmlImage.re` à la ligne 7. Cette fonction a la particularité d'utiliser les `labeled arguments` (<https://reasonml.github.io/docs/en/function.html#labeled-arguments>).
+> Spock vous signale qu'une fonction `draw` existe dans le fichier `Image.re` à la ligne 20. Cette fonction a la particularité d'utiliser les `labeled arguments` ou arguments nommés. Un argument nommé est un argument dont on précise le nom lors de l'appel de la fonction où il est déclaré. Cela permet, en autre, d'améliorer la clarté des paramètres donnés. Pour en savoir plus :(<https://reasonml.github.io/docs/en/function.html#labeled-arguments>).
 
-Il nous transmet aussi un guide sur `pattern matching` :
+Enfin, il nous transmet un guide sur le `pattern matching`. Selon lui, le pattern matching est l'une des meilleures fonctionalités de ReasonML, et c'est grâce à elle que nous pourrons connaitre l'état de l'`option`. Il rajoute qu'actuellement `render` ne gère que l'état où il n'y rien dans l'`option` (aka `None`) et que la réparation de la fonction `render` consiste juste à ajouter le cas `Some` pour dessiner l'image.
 
 * <https://reasonml.github.io/docs/en/pattern-matching.html#usage>
 
@@ -221,11 +258,9 @@ Il nous transmet aussi un guide sur `pattern matching` :
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
 <pre>
-let render = (ctx, state: Types.shipState) =>
-  switch state.potentialSprite {
-  | Some(sprite) =>
-    ctx |> HtmlImage.drawImage(sprite, ~x=state.x, ~y=state.y);
-    ();
+let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
+  switch state.potentialShipSprite {
+  | Some(sprite) => Image.draw(canvasContext, sprite, ~x=state.x, ~y=state.y)
   | None => ()
   };
 </pre>
@@ -234,28 +269,46 @@ let render = (ctx, state: Types.shipState) =>
 
 ---
 
-## Remettez en marche les propulseurs auxiliaires
+## Remettez en marche les propulseurs auxiliaires - (Etape 2)
 
 Notre vaiseau est cloué sur place et nous ne pouvons rien faire pour défendre la Fédération des planètes unies. Nous avons besoin de réparer les propulseurs auxiliaires.
 
-> Spock nous signale que notre vaisseau repose sur une architecture Flux et qu'il dispose d'actions listées dans le fichier `src/Actions.re`. Ces actions peut être dispatchées grâce à la fonction `dispatch` du module `Store` trouvable dans le fichier `src/Store.re`.
+![Notre vaisseau est bloqué](./docs/step2.png)
 
-Vous devez donc implémenter la fonction `onKeyUp` du fichier `src/Ship.re` pour y dispatcher les action `GoLeft` ou `GoRight` en fonction des touches du clavier.
+> Spock nous rappel que notre vaisseau repose sur une architecture Flux et qu'il dispose d'actions listées dans le fichier `src/Actions.re`. Ces actions peuvent être dispatchées grâce à la fonction `dispatch` du module `Store` trouvable dans le fichier `src/Store.re`.
+
+Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyUp` du fichier `src/Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` en fonction des touches du clavier.
 
 ```reason
-let onKeyUp = (event: Dom.keyboardEvent) : unit =>
-  switch (Webapi.Dom.KeyboardEvent.code(event)) {
+let onKeyUp = (keyCode: string) : unit =>
+  switch keyCode {
   | _ => ()
   };
 ```
 
-Le reducer du vaisseau `src/Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `y` en fonction de la direction que vous avez dispatché...
-L'ingénieur Scott, nous fait remarqué que ce reducer est un modèle un peu particulié car il prend aussi en charge le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en millisecond. Cela permettra de d'avoir une vitesse constante.
+Prêter bien attention, aux résultats des tests unitaires visibles dans la console. Ils vous indique le comportant attendu de `onKeyUp` de façon détailler.
+
+<details>
+<summary><i>Découvrer la solution ici</i></summary>
+<p>
+// src/Ship.re
+<pre>
+let onKeyUp = (event: Dom.keyboardEvent) : unit =>
+  switch (Webapi.Dom.KeyboardEvent.code(event)) {
+  | "ArrowLeft" => Store.dispatch(Actions.GoLeft)
+  | "ArrowRight" => Store.dispatch(Actions.GoRight)
+  | _ => ()
+  };
+</pre>
+</p>
+</details>
+
+Le reducer du vaisseau `src/Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `x` en fonction de la direction que vous avez dispatché...
+L'ingénieur Scott, nous rappel que ce reducer est un modèle un peu particulié car il prend aussi en charge le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en millisecond. Cela permettra de d'avoir une vitesse constante.
 
 ```reason
 let reducer = (elapsedTime: float, state: Types.shipState, action: Ations.all): Types.shipState =>
   switch action {
-  | ShipImageLoaded(img) => {...state, potentialSprite: Some(img)}
   | _ => state
   };
 ```
