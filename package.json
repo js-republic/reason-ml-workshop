@@ -6,7 +6,7 @@
     "start":
       "concurrently -c bgBlue.bold,black.bgRed.bold -n BSB,Webpack 'bsb -make-world -w' 'webpack --watch'",
     "clean": "bsb -clean-world",
-    "test": "jest --watch"
+    "test": "jest --watch --bail"
   },
   "keywords": ["ReasonML", "BuckleScript", "OCaml", "Workshop"],
   "authors": [

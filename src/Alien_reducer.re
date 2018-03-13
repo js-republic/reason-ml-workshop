@@ -14,11 +14,10 @@ let moveAlien = (elapsedTime: float, a: Types.alien) : Types.alien => a;
 
 let isStillInMap = (alien: Types.alien) => alien.y < Constants.height;
 
-let moveAliens = (aliens: list(Types.alien), elapsedTime: float) : list(Types.alien) =>
-  aliens |> List.map(moveAlien(elapsedTime)) |> List.filter(isStillInMap);
+let moveAliens = (elapsedTime: float, aliens: list(Types.alien)) : list(Types.alien) => aliens;
 
 let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all) : Types.alienState =>
   switch action {
-  | Tick => {...state, aliens: moveAliens(state.aliens, elapsedTime)}
+  | Tick => {...state, aliens: moveAliens(elapsedTime, state.aliens)}
   | _ => state
   };

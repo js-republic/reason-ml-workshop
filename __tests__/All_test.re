@@ -210,6 +210,36 @@ describe("Alien_reducer.re", () => {
       }
     )
   );
+  describe("moveAliens", () =>
+    test("should apply motion on all aliens", () => {
+      let newAliens =
+        Alien_reducer.moveAliens(
+          [
+            makeAlien(~x=10., ~y=20., ~direction=-1, ()),
+            makeAlien(~x=591., ~y=10., ~direction=1, ())
+          ],
+          10.
+        );
+      expect(newAliens)
+      |> toEqual([
+           makeAlien(~x=7., ~y=20., ~direction=-1, ()),
+           makeAlien(~x=590., ~y=80., ~direction=-1, ())
+         ]);
+    })
+  );
+  describe("moveAliens", () =>
+    test("should filter aliens out the map", () => {
+      let newAliens =
+        Alien_reducer.moveAliens(
+          [
+            makeAlien(~x=10., ~y=-1., ~direction=-1, ()),
+            makeAlien(~x=10., ~y=0., ~direction=1, ())
+          ],
+          10.
+        );
+      expect(newAliens) |> toEqual([makeAlien(~x=10., ~y=0., ~direction=1, ())]);
+    })
+  );
 });
 
 describe("Colision.re", () =>
