@@ -49,9 +49,9 @@ npm test
 
 Pour exécuter les tests unitaires qui vous serons indispensables.
 
-> Ne vous déconseillons l'utilisation de `yarn`, car des participants précédents ont rencontré des problèmes avec et nous n'avons pas de `yarn.lock` vous garantissant la bonne version des dépendances.
+> Nous vous déconseillons l'utilisation de `yarn`, car des participants précédents ont rencontré des problèmes avec et nous n'avons pas de `yarn.lock` vous garantissant la bonne version des dépendances.
 
-Il ne vous restera qu'a ouvrir le panneau de contrôle (aka. le fichier `index.html`) dans votre navigateur directement via `file://`.
+Il ne vous restera qu'à ouvrir le panneau de contrôle (aka. le fichier `index.html`) dans votre navigateur directement via `file://`.
 
 Avant de vous lancer dans cette mission, prennez quelques minutes pour vous familiariser avec l'architecture du vaisseau et du langage ReasonML qui le compose.
 
