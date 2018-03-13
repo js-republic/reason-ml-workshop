@@ -24,7 +24,7 @@ ReasonML est fortement lié à un autre projet nomé [Bucklescript](bucklescript
 Pour le réparer, il vous faudra d'abord récupérer les sources du centre de contrôle ici :
 
 ```bash
-git clone git@github.com:js-republic/reason-ml-workshop.git
+git clone https://github.com/js-republic/reason-ml-workshop.git
 ```
 
 Vous pourrez ensuite le démarrer en rentrant dans le terminal à la racine du projet :
