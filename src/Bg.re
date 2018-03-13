@@ -1,6 +1,6 @@
 open Webapi.Canvas.Canvas2d;
 
-let renderStartStage = (ctx: t, state: Types.screenState) => {
+let renderStartStage = (ctx: Types.canvasContext, state: Types.screenState) => {
   setFillStyle(ctx, String, "black");
   ctx |> beginPath;
   ctx |> rect(~x=0., ~y=0., ~w=state.width, ~h=state.height);
@@ -12,8 +12,9 @@ let renderStartStage = (ctx: t, state: Types.screenState) => {
   ();
 };
 
-let renderInGame = (ctx: Webapi.Canvas.Canvas2d.t, state: Types.screenState) =>
+let renderInGame =
+    (canvasContext: Types.canvasContext, state: Types.screenState) =>
   switch state.potentialBg {
-  | Some(bg) => HtmlImage.drawImage(bg, ~x=0., ~y=0., ctx)
+  | Some(bg) => Image.draw(canvasContext, bg, ~x=0., ~y=0.)
   | None => ()
   };

@@ -1,7 +1,5 @@
-open Types;
-
-let render = (ctx, state: alien) =>
+let render = (canvasContext: Types.canvasContext, state: Types.alien) =>
   switch state.potentialSprite {
-  | Some(img) => HtmlImage.drawImage(img, ~x=state.x, ~y=state.y, ctx)
+  | Some(img) => Image.draw(canvasContext, img, ~x=state.x, ~y=state.y)
   | _ => ()
   };

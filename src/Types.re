@@ -1,11 +1,20 @@
+type canvasContext = Webapi.Canvas.Canvas2d.t;
+
+type image;
+
+type coordinate = {
+  x: float,
+  y: float
+};
+
 type screenState = {
   height: float,
   width: float,
-  potentialBg: option(HtmlImage.t)
+  potentialBg: option(image)
 };
 
 type shipState = {
-  potentialSprite: option(HtmlImage.t),
+  potentialShipSprite: option(image),
   x: float,
   y: float,
   height: float,
@@ -15,7 +24,7 @@ type shipState = {
 type shot = {
   x: float,
   y: float,
-  potentialSprite: option(HtmlImage.t),
+  potentialSprite: option(image),
   width: float,
   height: float
 };
@@ -28,7 +37,7 @@ type shotState = {
 type alien = {
   x: float,
   y: float,
-  potentialSprite: option(HtmlImage.t),
+  potentialSprite: option(image),
   width: float,
   height: float,
   direction: int
@@ -49,6 +58,6 @@ type rootState = {
 
 type stageType = {
   willMount: unit => unit,
-  render: (Webapi.Canvas.Canvas2d.t, rootState) => unit,
+  render: (canvasContext, rootState) => unit,
   willDestroy: unit => unit
 };

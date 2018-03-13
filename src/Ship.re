@@ -1,9 +1,9 @@
-let onKeyUp = (event: Dom.keyboardEvent) : unit =>
-  switch (Webapi.Dom.KeyboardEvent.code(event)) {
+let onKeyDown = (keyCode: string) : unit =>
+  switch keyCode {
   | _ => ()
   };
 
-let render = (ctx, state: Types.shipState) =>
-  switch state.potentialSprite {
-  | _ => ()
+let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
+  switch state.potentialShipSprite {
+  | None => ()
   };
