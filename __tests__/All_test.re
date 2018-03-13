@@ -146,69 +146,6 @@ describe("Ship_reducer.re", () =>
   })
 );
 
-describe("Shot_reducer.re", () => {
-  describe("moveShot", () => {
-    test("should move a shot to the top", () => {
-      /* given a initial y shot's position and an expected y */
-      let y = 30.;
-      let elaspedTime = 10.;
-      let expectedY = y -. elaspedTime *. Shot_reducer.shotSpeed;
-      /* when call moveShot with the given Shot and 10ms */
-      let newShot = Shot_reducer.moveShot(elaspedTime, makeShot(~y, ()));
-      /* then the shot has moved has expected */
-      expect(makeShot(~y=expectedY, ())) |> toEqual(newShot);
-    });
-    test("should move a shot more to the top when the elapsed time is bigger", () => {
-      /* given a initial y shot's position and an expected y */
-      let y = 30.;
-      let elaspedTime = 50.;
-      let expectedY = y -. elaspedTime *. Shot_reducer.shotSpeed;
-      /* when call moveShot with the given Shot and 50ms */
-      let newShot = Shot_reducer.moveShot(elaspedTime, makeShot(~y, ()));
-      /* then the shot has moved more has expected */
-      expect(makeShot(~y=expectedY, ())) |> toEqual(newShot);
-    });
-  });
-  describe("moveShots", () => {
-    test("should move shots to the top", () => {
-      /* given shots and expected shots */
-      let shots = [makeShot(~y=30., ()), makeShot(~y=50., ())];
-      let expectedShots = [makeShot(~y=27., ()), makeShot(~y=47., ())];
-      /* when call moveShots with the given shots and 10ms */
-      let newShots = Shot_reducer.moveShots(10., shots);
-      /* then the shots has moved has expected */
-      expect(expectedShots) |> toEqual(newShots);
-    });
-    test("should move more shots to the top", () => {
-      /* given shots and expected shots */
-      let shots = [makeShot(~y=30., ()), makeShot(~y=50., ())];
-      let expectedShots = [makeShot(~y=24., ()), makeShot(~y=44., ())];
-      /* when call moveShots with the given shots and 10ms */
-      let newShots = Shot_reducer.moveShots(20., shots);
-      /* then the shots has moved has expected */
-      expect(expectedShots) |> toEqual(newShots);
-    });
-  });
-  describe("stillInTheScreen", () => {
-    test("should detect that shot is in the map", () => {
-      let isInTheMap = Shot_reducer.stillInTheScreen(makeShot(~y=1., ()));
-      expect(isInTheMap) |> toBe(true);
-    });
-    test("should detect that shot is out the map", () => {
-      let isInTheMap = Shot_reducer.stillInTheScreen(makeShot(~y=0., ()));
-      expect(isInTheMap) |> toBe(false);
-    });
-    test("should remove shots when they go out of the map", () => {
-      /* given shots and expected shots */
-      let shots = [makeShot(~y=0., ())];
-      /* when call moveShots with the given shots and 10ms */
-      let newShots = Shot_reducer.moveShots(10., shots);
-      /* then the shots has moved has expected */
-      expect([]) |> toEqual(newShots);
-    });
-  });
-});
-
 describe("Alien_reducer.re", () => {
   describe("nextX", () => {
     test("should compute the next alien x position when direction is left to right", () => {

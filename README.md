@@ -85,7 +85,7 @@ __tests__
 Le système de l'Enterprise NC-1701 est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En clair, cela signifie que l'ensemble de tous les états (ex: position, taille, image) de chaque élement (Ship, Shot, Alien) sont regroupés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
 A chaque fois qu'un élément (Ship, Shot, Alien) désire changer une information qui le concerne, il doit dispatcher une `Action` (toutes les actions disponibles du système sont déclarées dans le fichier `Actions.re`) à l'aide de la fonction `dispatch` du fichier `Store.re`.
 
-A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur le reducers principaux, celui de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agrégés et construisent le nouvel état du `rootState` qui servira au rendu.
+A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur le reducers principaux, celui de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agrégés et construisent le nouvel état du `rootState` qui servira au rendu. Vous pourrez retrouver un explication sur la structure du `Store` dans le fichier du même nom.
 
 > Les reducers de l'Enterprise ont la particularité de prendre en plus des habituelles paramètres `action` et `state` des reducers classiques, un paramètre supplémentaire appelé `elapsedTime`. Ce paramètre de type _float_ est en fait le temps passé depuis la dernière boucle de rendu. Le temps n'est en effet pas toujours le même entre deux boucles de rendu et par conséquent avoir le temps entre deux boucles permettra d'avoir des déplacements à vitesse constante.
 
@@ -125,71 +125,6 @@ Voici un aperçu globale du fonctionnement du système :
 |    +------+-------+
 |           |
 +-----------+
-```
-
-### Description du store
-
-Comme dit ci-avant le store contient tous les états de tous les éléments qui seront dessinés dans le jeux. Il convient donc de prêter une attention particulière à cette variable initialisée dans le fichier `Store.re` à ligne 14 :
-
-```reason
-/* "rootState" état global du système */
-state:
-/* "screen" définie l'état de l'écran (pas utile pour vous) */
-{
-  screen: {
-    height: Constants.height,
-    width: Constants.width,
-    potentialBg: None
-  },
-  /* "ship" définie l'état du vaisseau */
-  ship:
-    /* "potentialShipSprite" est l'image potentiellement chargée du vaisseau */
-    {
-      potentialShipSprite: None,
-      /* x et y sont les coordonnées du vaisseau */
-      x: Constants.width /. 2. -. 30.,
-      y: Constants.height -. 62.,
-      /* height et width sont la hauteur et largeur du vaisseau */
-      height: 62.,
-      width: 60.
-    },
-  /* "shot" définie l'état de tous les projectiles */
-  shot: {
-    itemModel:
-      /* "potentialSprite" est l'image potentiellement chargée du shot */
-      {
-        potentialSprite: None,
-        /* height et width sont la hauteur et largeur d'un projectile */
-        width: 8.,
-        height: 30.,
-        /* x et y sont les coordonnées d'un projectile */
-        x: 0.,
-        y: 0.
-      },
-    /* list des projectiles actuellement déssinés */
-    shots: []
-  },
-  /* "alien" définie l'état de tous les aliens */
-  alien: {
-    itemModel:
-      /* "potentialSprite" est l'image potentiellement chargée de l'alien */
-      {
-        potentialSprite: None,
-        /* height et width sont la hauteur et largeur d'un alien */
-        width: 64.,
-        height: 64.,
-        /* x et y sont les coordonnées d'un alien */
-        x: 0.,
-        y: 0.,
-        /* "direction" est le sens de déplacement de l'alien, 1 pour de gauche à droite, -1 pour droite à gauche */
-        direction: 1
-      },
-    /* "lastSpawn" réprésente le dernier timestamp auquel un alien a été créé */
-    lastSpawn: 0.,
-    /* list des aliens actuellement déssinés */
-    aliens: []
-  }
-}
 ```
 
 > L'ensemble des plans du vaisseau ainsi que les types utilisés dans le système sont visibles dans le fichier `Types.re`. Un fichier bien utile à garder sous le coude pour ne pas ce perdre dans le système ;)
@@ -241,7 +176,7 @@ Pour en savoir plus sur les modules, rendez-vous sur cette page :
 ## GPS intergalactic brouillé - (Etape 1)
 
 ```
-_#option_, _#patternMatching_, _#labeledArguments_
+#option, #patternMatching, #labeledArguments
 ```
 
 Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. En effet pour l'instant le vaisseau n'apparait même pas sur la carte :
@@ -289,7 +224,7 @@ let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
 ## Remettez en marche les propulseurs auxiliaires - (Etape 2)
 
 ```
-_#patternMatching_, _#immutabilité_, _#record_, _#spread_
+#patternMatching, #immutabilité, #record, #spread
 ```
 
 Notre vaisseau est cloué sur place et nous ne pouvons rien faire pour défendre la Fédération des planètes unies. Nous avons besoin de réparer les propulseurs auxiliaires.
@@ -374,87 +309,10 @@ let reducer = (elapsedTime: float, state: Types.shipState, action: Actions.all) 
 
 ---
 
-## Activer l'armement de l'enterprise
-
-```
-_#piping_, _#currying_, _#list_, _#spread_
-```
-
-Vous avez essayé d'appuyer sur la barre espace ? Vous verrez que le canon tire bien un projectile mais il reste complètement immobile...
-
-![Les projectiles ne bougent pas!](./docs/project-doesnt-move.gif)
-
-Le système de téléguidage des projectiles semble complètement H.S !
-
-Rendez-vous dans le fichier `Shot_reducer.re` :
-
-```reason
-let shotSpeed = 0.3;
-
-let stillInTheScreen = (shot: Types.shot) : bool => true;
-
-let moveShot = (elapsedTime: float, shot: Types.shot) : Types.shot => shot;
-
-let moveShots = (elapsedTime: float, shots: list(Types.shot)) : list(Types.shot) => shots;
-
-let reducer = (elapsedTime: float, state: Types.shotState, action: Actions.all) : Types.shotState =>
-  switch action {
-  | Tick => {...state, shots: state.shots |> moveShots(elapsedTime)}
-  | _ => state
-  };
-```
-
-Nous allons commencer par implémenter la fonction `moveShot`. Cette fonction comme son nom l'indique est responsable bouger un projectile. Vous pouvez connaitre le comportant attendu en lisant les tests unitaires correspondants.
-
-<details>
-<summary><i>Découvrer la solution ici</i></summary>
-<p>
-<pre>
-let shotSpeed = 0.3;
-/**/
-let moveShot = (elapsedTime: float, shot: Types.shot) : Types.shot => {
-  ...shot,
-  y: shot.y -. elapsedTime *. shotSpeed
-};
-</pre>
-</p>
-</details>
-
----
-
-Ayant rétablie le téléguidage pour un projectile, nous avons désormais besoin de l'appliquer à l'ensemble de ces derniers en implémentant les fonctions `moveShots` et `stillInTheScreen`. Tout comme la précédente fonction, nous utiliserons les tests unitaires correspondants pour nous guider. Nous aurons besoin pour cette fonction d'utiliser les [Pipes](http://2ality.com/2017/12/functions-reasonml.html#example-piping-lists) et les fonctions `map` et `filter` du module `List` de Reason.
-
-<details>
-<summary><i>Découvrer la solution entière</i></summary>
-<p>
-<pre>
-let shotSpeed = 0.3;
-/**/
-let stillInTheScreen = (shot: Types.shot) : bool => shot.y > 0.;
-/**/
-let moveShot = (elapsedTime: float, shot: Types.shot) : Types.shot => {
-  ...shot,
-  y: shot.y -. elapsedTime *. shotSpeed
-};
-/**/
-let moveShots = (elapsedTime: float, shots: list(Types.shot)) : list(Types.shot) =>
-  shots |> List.map(moveShot(elapsedTime)) |> List.filter(stillInTheScreen);
-/**/
-let reducer = (elapsedTime: float, state: Types.shotState, action: Actions.all) : Types.shotState =>
-  switch action {
-  | Tick => {...state, shots: state.shots |> moveShots(elapsedTime)}
-  | _ => state
-  };
-</pre>
-</p>
-</details>
-
----
-
 ## Detection des aliens
 
 ```
-_#tuple_, _#patternMatching_, _#list_, _#spread_
+#tuple, #patternMatching, #list, #spread
 ```
 
 Les éclaireurs nous signalent que les Aliens disposent d'un système de camouflage les rendants indetectables à nos radars.
@@ -561,7 +419,7 @@ let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all)
 ## La collision !
 
 ```
-_#tuple_, _#list_, _#concatenation_
+#tuple, #list, #concatenation
 ```
 
 L'entreprise est presque prêt ! Seul le système de detection des colisions reste inopérant.
