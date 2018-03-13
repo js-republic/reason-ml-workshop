@@ -77,9 +77,7 @@ __tests__
 Le système de l'Enterprise NC-1701 est basé sur une architecture Flux/Redux couplée à une boucle de rendu. En clair, cela signifie que l'ensemble de tous les états (ex: position, taille, image) de chaque élement (Ship, Shot, Alien) sont regroupés dans un état principal, apppelé le `rootState` lui même stocké dans le `store` présent dans le fichier `Store.re`.
 A chaque fois qu'un élément (Ship, Shot, Alien) désire changer une information qui le concerne, il doit dispatcher une `Action` (toutes les actions disponibles du système sont déclarées dans le fichier `Actions.re`) à l'aide de la fonction `dispatch` du fichier `Store.re`.
 
-A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur le reducers principaux, celui de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agrégés et construisent le nouvel état du `rootState` qui servira au rendu. Vous pourrez retrouver un explication sur la structure du `Store` dans le fichier du même nom.
-
-> Les reducers de l'Enterprise ont la particularité de prendre en plus des habituelles paramètres `action` et `state` des reducers classiques, un paramètre supplémentaire appelé `elapsedTime`. Ce paramètre de type _float_ est en fait le temps passé depuis la dernière boucle de rendu. Le temps n'est en effet pas toujours le même entre deux boucles de rendu et par conséquent avoir le temps entre deux boucles permettra d'avoir des déplacements à vitesse constante.
+A chaque itération de la boucle de rendu, toutes les actions dispatchées depuis la dernière itération sont appliquées sur le reducers principaux, celui de Ship, de Shot et de Alien respectivement déclarés dans les fichiers `Reducer.re`, `Ship_reducer.re`, `Shot_reducer.re` et `Alien_reducer.re`. Les nouveaux états retournés par les reducers sont alors agrégés et construisent le nouvel état du `rootState` qui servira au rendu. Vous pourrez retrouver une explication sur la structure du `Store` dans le fichier du même nom.
 
 Voici un aperçu globale du fonctionnement du système :
 
@@ -127,7 +125,7 @@ Même en 2265 le TDD fait toujours des merveilles pour guider les hommes (et les
 
 Aussi, on nous signale que tous les vaisseaux de StarFleet sont équipés d'une suite de test pour résoudre tous les problèmes du vaisseau.
 
-Vous retrouverez cette suite de test dans le fichier `__tests__/All_test.re`. Ces tests sont lancés dés que vous faite un `npm start` et leur résultat sont disponible dans la console.
+Vous retrouverez cette suite de test dans le fichier `__tests__/All_test.re`. Ces tests sont lancés dés que vous faite un `npm test` et leurs résultats sont disponibles dans la console.
 
 Gardez ce fichier ouvert, il vous sera d'un grand secours tout au long de votre mission.
 
@@ -161,7 +159,7 @@ Pour en savoir plus sur les modules, rendez-vous sur cette page :
 * Autre rappel : <https://github.com/arecvlohe/reasonml-cheat-sheet>
 * API ReasonML : <https://reasonml.github.io/api/index.html>
 
-> Pour les plus curieux : Sachez que les fichiers JavaScript générer depuis les sources ReasonML sont déposés dans le dossier `lib/js/src` depuis la racine du projet. Vous pourrez voir un peu à quoi ça ressemble une fois généré ;)
+> Pour les plus curieux : Sachez que les fichiers JavaScript générés depuis les sources ReasonML sont déposés dans le dossier `/lib/js/src`. Vous pourrez voir un peu à quoi ça ressemble une fois généré ;)
 
 > Votre mission commence ici capitaine, nous comptons sur vous et votre fine équipe.
 
@@ -184,19 +182,18 @@ let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
   };
 ```
 
-La fonction `render` prend en argument, en premier le contexte du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième, l'état courant du vaisseau visible dans le fichier `Types.re` à la ligne 7.
+La fonction `render` prend en argument, en premier le contexte du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième, l'état courant du vaisseau visible dans le fichier `Types.re` à la [ligne 7](./src/Types.re#L7).
 
-L'ingénieur en chef Scott, nous dit via le communicateur que l'image du vaisseau est réprésentée sous la forme d'une `option(Image)` (cf. [ligne 17](./src/Types.re#l17) du fichier `Types.re`). Une `option` est un type particulier présent nativement en ReasonML qu'on appelle un `Variant`. Il est en quelque sorte une coquille venant englober une variable dont on ignore si elle est valorisée ou non. Il permet de détecter la valorisation de manière plus élégante et plus puissante qu'un simple `maVar ? DO_SOME_THING() : DO_NOTHING()`.
+L'ingénieur en chef Scott, nous dit via le communicateur que l'image du vaisseau est réprésentée sous la forme d'une `option(Image)` (cf. [ligne 17](./src/Types.re#L17) du fichier `Types.re`). Une `option` est un type particulier présent nativement en ReasonML qu'on appelle un `Variant`. Il est en quelque sorte une coquille venant englober une variable dont on ignore si elle est valorisée ou non. Il permet de détecter la valorisation de manière plus élégante et plus puissante qu'un simple `maVar ? DO_SOME_THING() : DO_NOTHING()`.
 
 Dans notre cas, il sagit d'une `option` d'`image` c'est donc en quelque sorte une coquille contenant potentiellement une image (ou pas).
 `option` peut prendre soit l'état `Some` dans le cas où l'`option` contient une valeur, soit l'état `None` dans le cas où l'`option` ne contient rien.
 Pour en savoir plus sur le type option, il nous envoi le Spatio-lien suivant : <https://reasonml.github.io/docs/en/variant.html#option>
 
-> Spock vous signale qu'une fonction `draw` existe dans le fichier `Image.re` à la ligne 20. Cette fonction a la particularité d'utiliser les `labeled arguments` ou arguments nommés. Un argument nommé est un argument dont on précise le nom lors de l'appel de la fonction où il est déclaré. Cela permet, en autre, d'améliorer la clarté des paramètres donnés. Pour en savoir plus :(<https://reasonml.github.io/docs/en/function.html#labeled-arguments>).
+Spock nous transmet un guide sur le `pattern matching`. Selon lui, le pattern matching est l'une des meilleures fonctionalités de ReasonML, et c'est grâce à elle que nous pourrons connaitre l'état de l'`option`. Il rajoute qu'actuellement `render` ne gère que l'état où il n'y rien dans l'`option` (aka `None`) et que la réparation de la fonction `render` consiste juste à ajouter le cas `Some` pour dessiner l'image. Doc :
+<https://reasonml.github.io/docs/en/pattern-matching.html#usage>
 
-Enfin, il nous transmet un guide sur le `pattern matching`. Selon lui, le pattern matching est l'une des meilleures fonctionalités de ReasonML, et c'est grâce à elle que nous pourrons connaitre l'état de l'`option`. Il rajoute qu'actuellement `render` ne gère que l'état où il n'y rien dans l'`option` (aka `None`) et que la réparation de la fonction `render` consiste juste à ajouter le cas `Some` pour dessiner l'image.
-
-* <https://reasonml.github.io/docs/en/pattern-matching.html#usage>
+> Une fois le cas `Some` traité, on nous conseille d'utiliser la fonction `draw` dans le fichier `Image.re` à la [ligne 20](./src/Image.re#L20). Cette fonction a la particularité d'utiliser les `labeled arguments` ou arguments nommés. Un argument nommé est un argument dont on précise le nom lors de l'appel de la fonction où il est déclaré. Cela permet, en autre, d'améliorer la clarté des paramètres donnés. Pour en savoir plus :(<https://reasonml.github.io/docs/en/function.html#labeled-arguments>).
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
@@ -219,13 +216,13 @@ let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
 #patternMatching, #immutabilité, #record, #spread
 ```
 
-Notre vaisseau est cloué sur place et nous ne pouvons rien faire pour défendre la Fédération des planètes unies. Nous avons besoin de réparer les propulseurs auxiliaires.
+Notre vaisseau est désormais visible mais reste cloué sur place et nous ne pouvons rien faire pour défendre la Fédération des planètes unies. Nous avons besoin de réparer les propulseurs auxiliaires.
 
 ![Notre vaisseau est bloqué](./docs/step2.png)
 
 > Spock nous rappel que notre vaisseau repose sur une architecture Flux et qu'il dispose d'actions listées dans le fichier `Actions.re`. Ces actions peuvent être dispatchées grâce à la fonction `dispatch` du module `Store` trouvable dans le fichier `Store.re`.
 
-Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyDown` du fichier `Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` en fonction des touches du clavier.
+Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyDown` du fichier `Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` du module `Actions` en fonction des touches du clavier.
 
 ```reason
 let onKeyDown = (keyCode: string) : unit =>
@@ -253,7 +250,8 @@ let onKeyDown = (keyCode: string) : unit =>
 ---
 
 Le reducer du vaisseau `Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `x` en fonction de la direction que vous avez dispatché...
-L'ingénieur Scott, nous rappel que ce reducer est un modèle un peu particulié car il prend aussi en paramètre le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en milliseconde. Cela permettra d'avoir une vitesse constante.
+
+> Les reducers de l'Enterprise ont la particularité de prendre en plus des habituelles paramètres `action` et `state` des reducers classiques, un paramètre supplémentaire appelé `elapsedTime`. Ce paramètre de type _float_ est en fait le temps passé depuis la dernière boucle de rendu. Le temps n'est en effet pas toujours le même entre deux boucles de rendu et par conséquent avoir le temps entre deux boucles permettra d'avoir des déplacements à vitesse constante.
 
 ```reason
 let shipSpeed = 0.5;
@@ -343,10 +341,9 @@ let moveOnRightEdge = (a: Types.alien) : Types.alien => a;
 
 let moveAlien = (elapsedTime: float, a: Types.alien) : Types.alien => a;
 
-let isStillInMap = (alien: Types.alien) => alien.y < Constants.height;
+let isStillInMap = (alien: Types.alien) => a;
 
-let moveAliens = (aliens: list(Types.alien), elapsedTime: float) : list(Types.alien) =>
-  aliens |> List.map(moveAlien(elapsedTime)) |> List.filter(isStillInMap);
+let moveAliens = (aliens: list(Types.alien), elapsedTime: float) : list(Types.alien) => aliens;
 
 let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all) : Types.alienState =>
   switch action {
@@ -354,6 +351,17 @@ let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all)
   | _ => state
   };
 ```
+
+Pour implémenter la fonction `nextX`, vous aurez besoin de la fonction `float_of_int` pour convertir un `int` en `float`.
+
+La fonction `isOnEdge` va retourner un type que nous n'avons pas encore utilisé pour le moment puisse qu'il s'agit d'un `tuple`, un Tuple de deux éléments pour être plus précis. Un Tuple représente un ensemble de variable, quand il s'agit d'un tuple de deux on dit même souvent que c'est une paire. `isOnEdge` retournera un tuple composé pour sa partie de gauche d'un boolean pour savoir si l'alien passé en paramètre touche le bord gauche, et d'un autre boolean pour sa partie de droite pour savoir si l'alien passé en paramètre touche le bord droit.
+
+Pour implémenter `moveAlien`, vous ferez appel aux fonctions `nextX`, `isOnEdge`, `moveOnLeftEdge`, `moveOnRightEdge`.
+
+> Bon à savoir : on peut faire du pattern matching sur un tuple ;-)
+
+Pour implémenter `moveAliens` vous utiliserez un très belle syntaxe baptisée le `pipe operator` ainsi que l'API de `list` de ReasonML. Plus d'info ici :
+<http://2ality.com/2017/12/functions-reasonml.html#the-reverse-application-operator>
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
@@ -414,11 +422,11 @@ let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all)
 #tuple, #list, #concatenation
 ```
 
-L'entreprise est presque prêt ! Seul le système de detection des colisions reste inopérant.
+L'entreprise est presque prêt ! Seul le système de detection des colisions reste inopérant. Appuyez sur la barre espace et vous constaterez le problème !
 
 ![Dure de repousser une invasion comme ça !](./docs/no-colision.gif)
 
-Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsable de prendre les aliens et les projectiles et de ne resortir que ceux qui n'ont pas eu de colision entre-eux. Comme pour les derniers chapitres, vous pourez compter sur les tests unitaires pour vous guider. Pour cette fonction nous devrons utiliser la fonction `fold_left` du module `List`, de la concaténation de `list` grâce à l'operateur `@`
+Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsable de prendre les aliens et les projectiles et de ne resortir que ceux qui n'ont pas eu de colision entre-eux. Comme pour les derniers chapitres, vous pourez compter sur les tests unitaires pour vous guider. Pour cette fonction nous devrons utiliser la fonction `fold_left` du module `List`, et de la concaténation de `list` grâce à l'operateur `@`.
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>

@@ -4,8 +4,9 @@
   "scripts": {
     "init": "bsb -make-world",
     "start":
-      "concurrently -c bgBlue.bold,black.bgRed.bold,red.bgWhite.bold -n BSB,Webpack,Jest 'bsb -make-world -w' 'webpack --watch' 'jest --watchAll'",
-    "clean": "bsb -clean-world"
+      "concurrently -c bgBlue.bold,black.bgRed.bold -n BSB,Webpack 'bsb -make-world -w' 'webpack --watch'",
+    "clean": "bsb -clean-world",
+    "test": "jest --watch --bail"
   },
   "keywords": ["ReasonML", "BuckleScript", "OCaml", "Workshop"],
   "authors": [
