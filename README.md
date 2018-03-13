@@ -307,7 +307,7 @@ let reducer = (elapsedTime: float, state: Types.shipState, action: Actions.all) 
 
 ---
 
-## Detection des aliens
+## Detection des aliens - (Etape 3)
 
 ```
 #tuple, #patternMatching, #list, #spread
@@ -424,7 +424,7 @@ let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all)
 </p>
 </details>
 
-## La collision !
+## La collision ! - (Etape 4)
 
 ```
 #tuple, #list, #concatenation
