@@ -6,7 +6,7 @@ open Colision;
 
 open Expect;
 
-let mkAlien = (~x=10., ~y=0., ~height=10., ~width=10., ~direction=1, ()) => {
+let makeAlien = (~x=10., ~y=0., ~height=10., ~width=10., ~direction=1, ()) => {
   x,
   y,
   potentialSprite: None,
@@ -15,7 +15,7 @@ let mkAlien = (~x=10., ~y=0., ~height=10., ~width=10., ~direction=1, ()) => {
   direction
 };
 
-let mkShot = (~x=10., ~y=0., ~height=10., ~width=10., ()) => {
+let makeShot = (~x=10., ~y=0., ~height=10., ~width=10., ()) => {
   x,
   y,
   potentialSprite: None,
@@ -23,7 +23,7 @@ let mkShot = (~x=10., ~y=0., ~height=10., ~width=10., ()) => {
   height
 };
 
-let mkShipState = (~x=10., ~y=0., ~height=10., ~width=10., ()) => {
+let makeShip = (~x=10., ~y=0., ~height=10., ~width=10., ()) => {
   potentialShipSprite: None,
   x,
   y,
@@ -76,7 +76,7 @@ describe("Ship_reducer.re", () =>
   describe("reducer", () => {
     test("should returns the state as it when the action is not GoLeft or GoRight", () => {
       /* given a classic Ship state */
-      let shipState = mkShipState();
+      let shipState = makeShip();
       /* when Ship's reducer is called with an unhandled action*/
       let newShipState = Ship_reducer.reducer(0., shipState, Actions.ResetInGame);
       /* then, the returned state is the same */
@@ -84,10 +84,10 @@ describe("Ship_reducer.re", () =>
     });
     test("should move ship on the left when the action is GoLeft", () => {
       /* given */
-      let shipState = mkShipState(~x=10., ());
+      let shipState = makeShip(~x=10., ());
       let elapsedTime = 10.;
       let delta = elapsedTime *. Ship_reducer.shipSpeed;
-      let expectedShipState = mkShipState(~x=10. -. delta, ());
+      let expectedShipState = makeShip(~x=10. -. delta, ());
       /* when Ship's reducer is called with an GoLeft */
       let newShipState = Ship_reducer.reducer(elapsedTime, shipState, Actions.GoLeft);
       /* then, the returned state is the same */
@@ -95,10 +95,10 @@ describe("Ship_reducer.re", () =>
     });
     test("should move ship more on the left when the elapsed time is bigger", () => {
       /* given */
-      let shipState = mkShipState(~x=30., ());
+      let shipState = makeShip(~x=30., ());
       let elapsedTime = 30.;
       let delta = elapsedTime *. Ship_reducer.shipSpeed;
-      let expectedShipState = mkShipState(~x=30. -. delta, ());
+      let expectedShipState = makeShip(~x=30. -. delta, ());
       /* when Ship's reducer is called with an GoLeft */
       let newShipState = Ship_reducer.reducer(elapsedTime, shipState, Actions.GoLeft);
       /* then, the returned state is the same */
@@ -106,7 +106,7 @@ describe("Ship_reducer.re", () =>
     });
     test("should not move ship on the left when the Ship try to go out the map", () => {
       /* given the ship is already leftmost*/
-      let shipState = mkShipState(~x=0., ());
+      let shipState = makeShip(~x=0., ());
       /* when Ship's reducer is called with an GoLeft */
       let newShipState = Ship_reducer.reducer(10., shipState, Actions.GoLeft);
       /* then, the returned state is the same */
@@ -114,10 +114,10 @@ describe("Ship_reducer.re", () =>
     });
     test("should move ship on the right when the action is GoRight", () => {
       /* given */
-      let shipState = mkShipState(~x=10., ());
+      let shipState = makeShip(~x=10., ());
       let elapsedTime = 10.;
       let delta = elapsedTime *. Ship_reducer.shipSpeed;
-      let expectedShipState = mkShipState(~x=10. +. delta, ());
+      let expectedShipState = makeShip(~x=10. +. delta, ());
       /* when Ship's reducer is called with an GoRight */
       let newShipState = Ship_reducer.reducer(elapsedTime, shipState, Actions.GoRight);
       /* then, the returned state is the same */
@@ -125,10 +125,10 @@ describe("Ship_reducer.re", () =>
     });
     test("should move ship more on the right when the elapsed time is bigger", () => {
       /* given */
-      let shipState = mkShipState(~x=30., ());
+      let shipState = makeShip(~x=30., ());
       let elapsedTime = 30.;
       let delta = elapsedTime *. Ship_reducer.shipSpeed;
-      let expectedShipState = mkShipState(~x=30. +. delta, ());
+      let expectedShipState = makeShip(~x=30. +. delta, ());
       /* when Ship's reducer is called with an GoRight */
       let newShipState = Ship_reducer.reducer(elapsedTime, shipState, Actions.GoRight);
       /* then, the returned state is the same */
@@ -137,7 +137,7 @@ describe("Ship_reducer.re", () =>
     test("should not move ship on the right when the Ship try to go out the map", () => {
       /* given the ship is already leftmost*/
       let shipWidth = 10.;
-      let shipState = mkShipState(~x=Constants.width -. shipWidth, ~width=shipWidth, ());
+      let shipState = makeShip(~x=Constants.width -. shipWidth, ~width=shipWidth, ());
       /* when Ship's reducer is called with an GoRight */
       let newShipState = Ship_reducer.reducer(10., shipState, Actions.GoRight);
       /* then, the returned state is the same */
@@ -154,9 +154,9 @@ describe("Shot_reducer.re", () => {
       let elaspedTime = 10.;
       let expectedY = y -. elaspedTime *. Shot_reducer.shotSpeed;
       /* when call moveShot with the given Shot and 10ms */
-      let newShot = Shot_reducer.moveShot(elaspedTime, mkShot(~y, ()));
+      let newShot = Shot_reducer.moveShot(elaspedTime, makeShot(~y, ()));
       /* then the shot has moved has expected */
-      expect(mkShot(~y=expectedY, ())) |> toEqual(newShot);
+      expect(makeShot(~y=expectedY, ())) |> toEqual(newShot);
     });
     test("should move a shot more to the top when the elapsed time is bigger", () => {
       /* given a initial y shot's position and an expected y */
@@ -164,16 +164,16 @@ describe("Shot_reducer.re", () => {
       let elaspedTime = 50.;
       let expectedY = y -. elaspedTime *. Shot_reducer.shotSpeed;
       /* when call moveShot with the given Shot and 50ms */
-      let newShot = Shot_reducer.moveShot(elaspedTime, mkShot(~y, ()));
+      let newShot = Shot_reducer.moveShot(elaspedTime, makeShot(~y, ()));
       /* then the shot has moved more has expected */
-      expect(mkShot(~y=expectedY, ())) |> toEqual(newShot);
+      expect(makeShot(~y=expectedY, ())) |> toEqual(newShot);
     });
   });
   describe("moveShots", () => {
     test("should move shots to the top", () => {
       /* given shots and expected shots */
-      let shots = [mkShot(~y=30., ()), mkShot(~y=50., ())];
-      let expectedShots = [mkShot(~y=27., ()), mkShot(~y=47., ())];
+      let shots = [makeShot(~y=30., ()), makeShot(~y=50., ())];
+      let expectedShots = [makeShot(~y=27., ()), makeShot(~y=47., ())];
       /* when call moveShots with the given shots and 10ms */
       let newShots = Shot_reducer.moveShots(10., shots);
       /* then the shots has moved has expected */
@@ -181,8 +181,8 @@ describe("Shot_reducer.re", () => {
     });
     test("should move more shots to the top", () => {
       /* given shots and expected shots */
-      let shots = [mkShot(~y=30., ()), mkShot(~y=50., ())];
-      let expectedShots = [mkShot(~y=24., ()), mkShot(~y=44., ())];
+      let shots = [makeShot(~y=30., ()), makeShot(~y=50., ())];
+      let expectedShots = [makeShot(~y=24., ()), makeShot(~y=44., ())];
       /* when call moveShots with the given shots and 10ms */
       let newShots = Shot_reducer.moveShots(20., shots);
       /* then the shots has moved has expected */
@@ -191,16 +191,16 @@ describe("Shot_reducer.re", () => {
   });
   describe("stillInTheScreen", () => {
     test("should detect that shot is in the map", () => {
-      let isInTheMap = Shot_reducer.stillInTheScreen(mkShot(~y=1., ()));
+      let isInTheMap = Shot_reducer.stillInTheScreen(makeShot(~y=1., ()));
       expect(isInTheMap) |> toBe(true);
     });
     test("should detect that shot is out the map", () => {
-      let isInTheMap = Shot_reducer.stillInTheScreen(mkShot(~y=0., ()));
+      let isInTheMap = Shot_reducer.stillInTheScreen(makeShot(~y=0., ()));
       expect(isInTheMap) |> toBe(false);
     });
     test("should remove shots when they go out of the map", () => {
       /* given shots and expected shots */
-      let shots = [mkShot(~y=0., ())];
+      let shots = [makeShot(~y=0., ())];
       /* when call moveShots with the given shots and 10ms */
       let newShots = Shot_reducer.moveShots(10., shots);
       /* then the shots has moved has expected */
@@ -212,54 +212,60 @@ describe("Shot_reducer.re", () => {
 describe("Alien_reducer.re", () => {
   describe("nextX", () => {
     test("should compute the next alien x position when direction is left to right", () => {
-      let x = Alien_reducer.nextX(10., mkAlien(~x=10., ~direction=1, ()));
+      let x = Alien_reducer.nextX(10., makeAlien(~x=10., ~direction=1, ()));
       expect(x) |> toBe(13.);
     });
     test("should compute the next alien x position when direction is right to left", () => {
-      let x = Alien_reducer.nextX(10., mkAlien(~x=10., ~direction=-1, ()));
+      let x = Alien_reducer.nextX(10., makeAlien(~x=10., ~direction=-1, ()));
       expect(x) |> toBe(7.);
     });
   });
   describe("isOnEdge", () => {
     test("should be (true, _) when X is under 0", () => {
-      let (leftPart, _) = Alien_reducer.isOnEdge(-1., mkAlien());
+      let (leftPart, _) = Alien_reducer.isOnEdge(-1., makeAlien());
       expect(leftPart) |> toBe(true);
     });
     test("should be (false, _) when X is equal or more than 0", () => {
-      let (leftPart, _) = Alien_reducer.isOnEdge(0., mkAlien());
+      let (leftPart, _) = Alien_reducer.isOnEdge(0., makeAlien());
       expect(leftPart) |> toBe(false);
     });
     test("should be (_, true) when the right border of alien exeeds map width", () => {
-      let (_, rightPath) = Alien_reducer.isOnEdge(591., mkAlien(~width=10., ()));
+      let (_, rightPath) = Alien_reducer.isOnEdge(591., makeAlien(~width=10., ()));
       expect(rightPath) |> toBe(true);
     });
     test("should be (_, false) when the right border of alien doesn't exeed map width", () => {
-      let (_, rightPath) = Alien_reducer.isOnEdge(590., mkAlien(~width=10., ()));
+      let (_, rightPath) = Alien_reducer.isOnEdge(590., makeAlien(~width=10., ()));
       expect(rightPath) |> toBe(false);
     });
   });
   describe("moveOnLeftEdge", () =>
     test("should move correclty", () => {
-      let alien = mkAlien(~x=10., ~y=20., ~direction=-1, ());
+      let alien = makeAlien(~x=10., ~y=20., ~direction=-1, ());
       let newAlien = Alien_reducer.moveOnLeftEdge(alien);
-      expect(newAlien) |> toEqual(mkAlien(~x=0., ~y=90., ~direction=1, ()));
+      expect(newAlien) |> toEqual(makeAlien(~x=0., ~y=90., ~direction=1, ()));
     })
   );
   describe("moveOnRightEdge", () =>
     test("should move correclty", () => {
-      let alien = mkAlien(~x=590., ~y=20., ~direction=1, ~width=10., ());
+      let alien = makeAlien(~x=590., ~y=20., ~direction=1, ~width=10., ());
       let newAlien = Alien_reducer.moveOnRightEdge(alien);
-      expect(newAlien) |> toEqual(mkAlien(~x=590., ~y=90., ~direction=-1, ()));
+      expect(newAlien) |> toEqual(makeAlien(~x=590., ~y=90., ~direction=-1, ()));
     })
   );
   describe("moveAlien", () =>
     testAll(
       "should apply motion for each case",
       [
-        (mkAlien(~x=10., ~y=20., ~direction=1, ()), mkAlien(~x=13., ~y=20., ~direction=1, ())),
-        (mkAlien(~x=10., ~y=20., ~direction=-1, ()), mkAlien(~x=7., ~y=20., ~direction=-1, ())),
-        (mkAlien(~x=0., ~y=30., ~direction=-1, ()), mkAlien(~x=0., ~y=100., ~direction=1, ())),
-        (mkAlien(~x=591., ~y=10., ~direction=1, ()), mkAlien(~x=590., ~y=80., ~direction=-1, ()))
+        (makeAlien(~x=10., ~y=20., ~direction=1, ()), makeAlien(~x=13., ~y=20., ~direction=1, ())),
+        (
+          makeAlien(~x=10., ~y=20., ~direction=-1, ()),
+          makeAlien(~x=7., ~y=20., ~direction=-1, ())
+        ),
+        (makeAlien(~x=0., ~y=30., ~direction=-1, ()), makeAlien(~x=0., ~y=100., ~direction=1, ())),
+        (
+          makeAlien(~x=591., ~y=10., ~direction=1, ()),
+          makeAlien(~x=590., ~y=80., ~direction=-1, ())
+        )
       ],
       ((alien, expectedAlien)) => {
         let newAlien = Alien_reducer.moveAlien(10., alien);
@@ -273,22 +279,22 @@ describe("Colision.re", () =>
   describe("findNotCollided", () => {
     test("should return empty shot list and alien list when they collide", () => {
       /* given */
-      let aliens: list(alien) = [mkAlien()];
-      let shots: list(shot) = [mkShot()];
+      let aliens: list(alien) = [makeAlien()];
+      let shots: list(shot) = [makeShot()];
       /* when */
       let (remainingAliens, remainingShots) = findNotCollided(aliens, shots);
       /* then */
       expect((List.length(remainingAliens), List.length(remainingShots))) |> toEqual((0, 0));
     });
     test("should return alien and shot when they don't collide", () => {
-      let aliens: list(alien) = [mkAlien()];
-      let shots: list(shot) = [mkShot(~x=11., ~y=11., ())];
+      let aliens: list(alien) = [makeAlien()];
+      let shots: list(shot) = [makeShot(~x=11., ~y=11., ())];
       let (remainingAliens, remainingShots) = findNotCollided(aliens, shots);
       expect((List.length(remainingAliens), List.length(remainingShots))) |> toEqual((1, 1));
     });
     test("should return one alien when the shot hits another alien", () => {
-      let aliens: list(alien) = [mkAlien(), mkAlien(~x=5., ~y=5., ())];
-      let shots: list(shot) = [mkShot(~x=11., ~y=11., ())];
+      let aliens: list(alien) = [makeAlien(), makeAlien(~x=5., ~y=5., ())];
+      let shots: list(shot) = [makeShot(~x=11., ~y=11., ())];
       let (remainingAliens, remainingShots) = findNotCollided(aliens, shots);
       expect((List.length(remainingAliens), List.length(remainingShots))) |> toEqual((1, 0));
     });

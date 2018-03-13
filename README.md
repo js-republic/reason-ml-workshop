@@ -184,7 +184,7 @@ state:
 }
 ```
 
-> L'ensemble des plans du vaisseau ainsi que les types utilisés dans le système sont visibles dans le fichier `src/Types.re`. Un fichier bien utile à garder sous le coude pour ne pas ce perdre dans le système ;)
+> L'ensemble des plans du vaisseau ainsi que les types utilisés dans le système sont visibles dans le fichier `Types.re`. Un fichier bien utile à garder sous le coude pour ne pas ce perdre dans le système ;)
 
 ### TDD de l'espace !
 
@@ -240,7 +240,7 @@ Votre première tâche va consister à réparer le GPS de l'Enterprise NC-1701. 
 
 ![Le vide de l'espace](./docs/step1.png)
 
-Rendez-vous dans le fichier `src/Ship.re`, pour réactiver le rendu de notre vaisseau sur la carte en implémentant la fonction `render`.
+Rendez-vous dans le fichier `Ship.re`, pour réactiver le rendu de notre vaisseau sur la carte en implémentant la fonction `render`.
 
 ```reason
 let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
@@ -249,7 +249,7 @@ let render = (canvasContext: Types.canvasContext, state: Types.shipState) =>
   };
 ```
 
-La fonction `render` prend en argument, en premier le contexte du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième, l'état courant du vaisseau visible dans le fichier `src/Types.re` à la ligne 7.
+La fonction `render` prend en argument, en premier le contexte du canvas ([API Canvas Context](https://developer.mozilla.org/fr/docs/Web/API/CanvasRenderingContext2D)) et en deuxième, l'état courant du vaisseau visible dans le fichier `Types.re` à la ligne 7.
 
 L'ingénieur en chef Scott, nous dit via le communicateur que l'image du vaisseau est réprésentée sous la forme d'une `option(Image)` (cf. [ligne 17](./src/Types.re#l17) du fichier `Types.re`). Une `option` est un type particulier présent nativement en ReasonML qu'on appelle un `Variant`. Il est en quelque sorte une coquille venant englober une variable dont on ignore si elle est valorisée ou non. Il permet de détecter la valorisation de manière plus élégante et plus puissante qu'un simple `maVar ? DO_SOME_THING() : DO_NOTHING()`.
 
@@ -288,9 +288,9 @@ Notre vaisseau est cloué sur place et nous ne pouvons rien faire pour défendre
 
 ![Notre vaisseau est bloqué](./docs/step2.png)
 
-> Spock nous rappel que notre vaisseau repose sur une architecture Flux et qu'il dispose d'actions listées dans le fichier `src/Actions.re`. Ces actions peuvent être dispatchées grâce à la fonction `dispatch` du module `Store` trouvable dans le fichier `src/Store.re`.
+> Spock nous rappel que notre vaisseau repose sur une architecture Flux et qu'il dispose d'actions listées dans le fichier `Actions.re`. Ces actions peuvent être dispatchées grâce à la fonction `dispatch` du module `Store` trouvable dans le fichier `Store.re`.
 
-Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyDown` du fichier `src/Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` en fonction des touches du clavier.
+Pour que le vaisseau puisse se déplacer à nouveau, vous devez implémenter la fonction `onKeyDown` du fichier `Ship.re` pour y dispatcher les actions `GoLeft` ou `GoRight` en fonction des touches du clavier.
 
 ```reason
 let onKeyDown = (keyCode: string) : unit =>
@@ -304,7 +304,6 @@ Prêter bien attention aux résultats de la partie `Ship.re` des tests unitaires
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
 <p>
-// src/Ship.re
 <pre>
 let onKeyDown = (keyCode: string) : unit =>
   switch keyCode {
@@ -318,7 +317,7 @@ let onKeyDown = (keyCode: string) : unit =>
 
 ---
 
-Le reducer du vaisseau `src/Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `x` en fonction de la direction que vous avez dispatché...
+Le reducer du vaisseau `Ship_reducer.re` doit lui aussi être mis à jour pour de gérer les actions `GoLeft` et `GoRight` afin d'appliquer une translation du vaisseau en `x` en fonction de la direction que vous avez dispatché...
 L'ingénieur Scott, nous rappel que ce reducer est un modèle un peu particulié car il prend aussi en paramètre le temps depuis le dernier rafraichissement de l'écran, le paramètre `elapsedTime` en milliseconde. Cela permettra d'avoir une vitesse constante.
 
 ```reason
@@ -370,7 +369,7 @@ let reducer = (elapsedTime: float, state: Types.shipState, action: Actions.all) 
 ## Activer l'armement de l'enterprise
 
 ```
-_#piping_, _#currying_, _#list_
+_#piping_, _#currying_, _#list_, _#spread_
 ```
 
 Vous avez essayé d'appuyer sur la barre espace ? Vous verrez que le canon tire bien un projectile mais il reste complètement immobile...
@@ -446,27 +445,57 @@ let reducer = (elapsedTime: float, state: Types.shotState, action: Actions.all) 
 
 ## Detection des aliens
 
+```
+_#tuple_, _#patternMatching_, _#list_, _#spread_
+```
+
 Les éclaireurs nous signalent que les Aliens disposent d'un système de camouflage les rendants indetectables à nos radars.
 
 C'est la fin !
 
 > Heureusement, oreilles pointues à une solution : A s'appuyant sur l'intelligence actificielle du vaisseau et des données des nombreuses batailles précédentes, Spock est arrivé à déterminer qu'elle sera la trajectoire exacte des Aliens pendant leur attaque. Il propose alors de simuler ces trajectoires dans l'écran de contrôle afin de ne plus être aveugle !
 
-Pour ce faire, nous allons modifier le radar à onde courte d'alien implémenter dans le `src/Alien_reducer.re` afin de gérer l'action `Tick` émise par l'intelligence actificielle. Nous pourrons ainsi mettre à jour les propriétés `aliens` et `lastSpawn` de path du store `state.alien`. Elles représentent respectivement la liste des aliens connus et le timestamp de la derniere apparation d'un alien.
-
-Spock a déterminé que les aliens allaient suivre un intinéraire en serpentin :
+Le résultat de la simulation ressemblerait à cela :
 
 ```
---O--O--O---+
-            |
-+--O--O--O--+
-|
-+-O--O--O---+
-            |
-            v
+(0,0)---------->
+| x-O--O--O---+
+|             |
+| +--O--O--O--+
+| |
+| +-O--O--O---+
+|             |
+v             v
 ```
 
-La aliens arriveront toutes les 600 ms à une vitesse de 0.3 x le temps entre chaque boucle. Les aliens ont un sens de `direction` exprimé sous la forme d'un entier égal à 1 quand ils vont de gauche à droite et -1 quand ils vont droite à gauche (cf `alien` ligne 28 dans le fichier `src/Types.re`). Chaque fois que les aliens arrivent aux bords de la carte, ils font demi-tour et descendent de 40.
+Pour implémenter cette simulation, nous allons modifier le radar à onde courte d'alien implémenté dans `Alien_reducer.re` en suivant ce que nous disent les tests unitaires :
+
+```reason
+let alienSpeed = 0.3;
+
+let nextX = (elapsedTime: float, a: Types.alien) : float => 0.;
+
+let isOnEdge = (newX: float, alien: Types.alien) : (bool, bool) => (true, true);
+
+let alienStep = 70.;
+
+let moveOnLeftEdge = (a: Types.alien) : Types.alien => a;
+
+let moveOnRightEdge = (a: Types.alien) : Types.alien => a;
+
+let moveAlien = (elapsedTime: float, a: Types.alien) : Types.alien => a;
+
+let isStillInMap = (alien: Types.alien) => alien.y < Constants.height;
+
+let moveAliens = (aliens: list(Types.alien), elapsedTime: float) : list(Types.alien) =>
+  aliens |> List.map(moveAlien(elapsedTime)) |> List.filter(isStillInMap);
+
+let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all) : Types.alienState =>
+  switch action {
+  | Tick => {...state, aliens: moveAliens(state.aliens, elapsedTime)}
+  | _ => state
+  };
+```
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>
@@ -523,7 +552,15 @@ let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all)
 
 ## La collision !
 
-L'entreprise est presque prêt ! Seul le système de detection des colisions reste inopérant. Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsabile de prendre les aliens et les tirs de canon à Ion et de ne resortir que ceux qui n'ont pas eu de colision entre-eux :
+```
+_#tuple_, _#list_, _#concatenation_
+```
+
+L'entreprise est presque prêt ! Seul le système de detection des colisions reste inopérant.
+
+![Dure de repousser une invasion comme ça !](./docs/no-colision.gif)
+
+Regarder le fichier `Colision.re`, il contient la fonction `findNotCollided` responsable de prendre les aliens et les projectiles et de ne resortir que ceux qui n'ont pas eu de colision entre-eux. Comme pour les derniers chapitres, vous pourez compter sur les tests unitaires pour vous guider. Pour cette fonction nous devrons utiliser la fonction `fold_left` du module `List`, de la concaténation de `list` grâce à l'operateur `@`
 
 <details>
 <summary><i>Découvrer la solution ici</i></summary>

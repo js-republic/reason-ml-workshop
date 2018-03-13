@@ -14,8 +14,7 @@ let pre = (_, state: Types.rootState, action: Actions.all) : Types.rootState => 
     }
   | Tick =>
     let hasToRespawn = now -. state.alien.lastSpawn > 500.;
-    let aliens =
-      /*hasToRespawn ? state.alien.aliens @ [state.alien.itemModel] :*/ state.alien.aliens;
+    let aliens = hasToRespawn ? state.alien.aliens @ [state.alien.itemModel] : state.alien.aliens;
     let (aliens, shots) = Colision.findNotCollided(aliens, state.shot.shots);
     {
       ...state,
