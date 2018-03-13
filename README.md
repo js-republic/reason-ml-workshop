@@ -354,7 +354,7 @@ let reducer = (elapsedTime: float, state: Types.alienState, action: Actions.all)
 
 Pour implémenter la fonction `nextX`, vous aurez besoin de la fonction `float_of_int` pour convertir un `int` en `float`.
 
-La fonction `isOnEdge` va retourner un type que nous n'avons pas encore utilisé pour le moment puisse qu'il s'agit d'un `tuple`, un Tuple de deux éléments pour être plus précis. Un Tuple représente un ensemble de variable, quand il s'agit d'un tuple de deux on dit même souvent que c'est une paire. `isOnEdge` retournera un tuple composé pour sa partie de gauche d'un boolean pour savoir si l'alien passé en paramètre touche le bord gauche, et d'un autre boolean pour sa partie de droite pour savoir si l'alien passé en paramètre touche le bord droit.
+La fonction `isOnEdge` va retourner un type que nous n'avons pas encore utilisé pour le moment puisse qu'il s'agit d'un `tuple`, un Tuple de deux éléments pour être plus précis. Un Tuple représente un ensemble de variable, quand il s'agit d'un tuple de deux on dit même souvent que c'est une paire. `isOnEdge` retournera un tuple composé pour sa partie de gauche d'un boolean pour savoir si l'alien passé en paramètre touche le bord gauche, et d'un autre boolean pour sa partie de droite pour savoir si l'alien passé en paramètre touche le bord droit. Plus d'infos [ici](https://reasonml.github.io/docs/fr/tuple.html).
 
 Pour implémenter `moveAlien`, vous ferez appel aux fonctions `nextX`, `isOnEdge`, `moveOnLeftEdge`, `moveOnRightEdge`.
 
